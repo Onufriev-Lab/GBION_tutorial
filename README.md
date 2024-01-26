@@ -499,7 +499,7 @@ Then to load the trajectory for further analysis type:
 
 After loading the trajectory type in command line:
 
-`rms ToFirst :40-133,161-237,254-354,398-485,527-620,648-724,741-841,885-972,975-1264 out rms_histone_core.txt`
+`rms ToFirst :40-133,161-237,254-354,398-485,527-620,648-724,741-841,885-972,975-1264 out rms_Nucleosome_no_tails.txt`
 
 This command defines atoms that are taken into account in calculation. These are residues of the nucleosome, histone tails excluded.
 
