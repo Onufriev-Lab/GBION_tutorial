@@ -1,8 +1,8 @@
 ## Simulation of large systems using implicit solvent/explicit ions model
 
-This tutorial aims to demonstrate simulation of a large system containing DNA (nucleosome) in implicit solvent in combination with explicit ions. We assume that user has basic skills of running MD simulations using AMBER package. It also requires installing python with NumPy and Matplotlib libraries and CHIMERA([link for downloading](https://www.cgl.ucsf.edu/chimera/download.html)).
+This tutorial is designed to guide users through simulating a large DNA system (specifically, a nucleosome) using an implicit solvent model in combination with explicit ions implemented into the AMBER software package. The guide targets users with a foundational understanding of molecular dynamics (MD) simulations and requires Python installed with the NumPy and Matplotlib libraries, as well as the CHIMERA program([link for downloading](https://www.cgl.ucsf.edu/chimera/download.html)).
 
-The outline of this tutorial:
+The tutorial is structured to guide participants through the entire process of simulating a nucleosome. It consists of the steps below:
 
 1. Preparing the system with nucleosome for the simulations
 2. Preparing input files for the simulation of nucleosome
@@ -11,19 +11,19 @@ The outline of this tutorial:
 5. Visualization of ion distribution around DNA using CHIMERA
 
 ### SECTION 1. Brief introduction
-Large systems, such as nucleosomes, require 5- or 6-digits numbers of water molecules for the proper simulation with explicit water model. Another approach to treating water (implicit water model) allows taking water into account as a continuous environment around the molecule. The solvation free energy of the solvated molecules defines their behavior in the solution. The solvation energy $\Delta G_{solv}$ can be represented as a sum of electrostatic $\Delta G_{el}$ and non-polar $\Delta G_{np}$ contributions:
+Simulating large systems like nucleosomes traditionally requires a significant number (5- or 6-digits) of water molecules for accuracy, presenting computational challenges. An alternative, the implicit water model, represents water as a continuous medium, simplifying simulations. The solvation free energy, critical for understanding molecular behavior in solution ($\Delta G_{solv}$), comprises electrostatic ($\Delta G_{el}$) and non-polar ($\Delta G_{np}$) contributions, calculated separately:
 
 $\Delta G_{solv} = \Delta G_{el} + \Delta G_{np}$ 
 
-which are estimated independently in most cases. One of the most popular approximation to calculating $\Delta G_{np}$ is based on the assumption that $\Delta G_{np}$ is proportional to the solvent-accessible surface area (SASA).
+One of the most popular approximation to calculating $\Delta G_{np}$ is based on the assumption that $\Delta G_{np}$ is proportional to the solvent-accessible surface area (SASA).
 
-One of the most widely used approximation for calculation $\Delta G_{el}$ is the generalized Born (GB) model. The canonical GB approximation is based on the equation originally proposed by Still *et al.*:
+The generalized Born (GB) model is a common method for estimating $\Delta G_{el}$, effectively describing topologically connected structures. The canonical GB approximation is based on the equation originally proposed by Still *et al.*:
 
 $\Delta G_{el} = -\frac{1}{2} \left(\frac{1}{\epsilon_{in}} -\frac{1}{\epsilon_{out}}\right)\sum_{i,j} \frac{q_{i}q_{j}}{\sqrt{d^2_{ij} + R_{i}R_{j}\exp\left(-d^2_{ij}/(4 R_i R_j)\right)}}$,
 
 where $\epsilon_{in}$ and $\epsilon_{out}$ are the dielectric constants of the solute and the solvent, respectively, $d_{ij}$ is the distance between solute atoms $i$ and $j$, and $q_{i}$ are the atomic charges. The key parameters modulating the interaction energy are *the effective Born radii* $R_i$. $R_i^{-1}$ characterizes the average degree of solvent exposure of atom $i$.
 
-The GB model describes behaviour of the topologically connected structures really well, but it does not take into account descrete ions around solute. The ISEXI model was developed as an extension of GB model to simulate ions around DNA with implicit solvent. It implies additional coefficients to the GB equation:
+The GB model does not take into account descrete ions around solute. The ISEXI model extends the GB framework to include explicit ions in simulations with an implicit solvent. It implies additional coefficients to the GB equation:
 
 $\Delta G_{el} = -\frac{1}{2} \left(\frac{1}{\mathbf{\epsilon_{in}(a,b)}} -\frac{1}{\epsilon_{out}}\right)\sum_{i,j} \frac{q_{i}q_{j}}{\sqrt{d^2_{ij} + R_{i}R_{j}\exp\left(-d^2_{ij}/(\mathbf {\gamma(a,b)} R_i R_j)\right)}}$
 
@@ -33,7 +33,7 @@ The expression above emphasizes the main idea of the ISEXI model that the functi
 
 #### 1. Preparation of the nucleosome structure
 
-Here we use the previously developed protocol of nucleosome simulation, reworked slightly to be suitable for simulations using implicit solvent/explicit ions model. To get the initial structures for simulations, go to the site ([link](https://zenodo.org/records/8315307)) and download archive. You can find the nucleosome structure via path: `md_setup/md_protocol/OPC/ff99SB/R3A/01_equil_histone_tails/1_build/nucleosome.pdb`, also available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/nucleosome.pdb)). You can visualize the structure using CHIMERA, just open the `nucleosome.pdb` file using the program. You should see the picture like below:
+This section guides you through obtaining initial structures for nucleosome simulations using implicit solvent/explicit ions model. To get the initial structures for simulations, go to the site ([link](https://zenodo.org/records/8315307)) and download archive. You can also find the nucleosome structure via path: `md_setup/md_protocol/OPC/ff99SB/R3A/01_equil_histone_tails/1_build/nucleosome.pdb`, also available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/nucleosome.pdb)). You can visualize the structure using CHIMERA, just open the `nucleosome.pdb` file using the program. You should see the picture like below:
 
 ![(./Pictures/nucleosome_stretched.png)](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Pictures/nucleosome_stretched.png)
 
@@ -79,13 +79,13 @@ To run the script, type in command line:
 
 `tleap -f tleap.script`
 
-After running the script you should get 3 new files in the working directory: nuc.top nuc.crd and nuc.pdb. First one is a topology file of the system you created, it contains parameters required for MD simulation that define energies of all the interactions, second one contains the initial coordinates of the system. You can visualize the result using CHIMERA. Just open the `dna.pdb` file using the program. You should see a picture like this:
+Upon executing the script for nucleosome simulation using the implicit solvent/explicit ions model, you will generate three new files in your working directory: `nuc.top`, `nuc.crd` and `nuc.pdb`. The first file is the system's topology file, detailing the parameters essential for molecular dynamics simulation, including interaction energies. The second file includes the initial coordinates of your system. You can visualize the result using CHIMERA. Just open the `dna.pdb` file using the program. You should see a picture like this:
 ![./Pictures/nucleosome_stretched_ions_all.png](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Pictures/nucleosome_stretched_ions_all.png) ![./Pictures/nucleosome_stratched_ions_part.png](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Pictures/nucleosome_stretched_ions_part.png)
 Both are the fugures of the same system, at the second some ions are hidden for clarity.
 
 #### 2. Preparing file with restraints
 
-Since the system is simulated in implicit water there is no periodic boundary conditions for the system. Thus, ions will diffuse away from the nucleosome, being not anchored to the molecule simulated. Here we use standard practice implemented into AMBER package, defining the restraints that are applied to a pair of atoms. Use the file `disang.py` (available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/disang.py))) to prepare the restraints.
+Since the system is simulated in implicit water there is no periodic boundary conditions for the system. This can not prevent anions diffusing away from the nucleosome since they aren't anchored to the molecule. Here we use standard practice implemented into AMBER package, defining the restraints that are applied to a pair of atoms. Use the file `disang.py` (available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/disang.py))) to prepare the restraints.
 
 To run the generation of the file, type in command line:
 
@@ -106,7 +106,7 @@ From 0 to `r1` force linearly depends on the distance, from `r1` to `r2` parabol
 
 ### SECTION 3. Energy minimization
 
-In the molecule, some clashes may appear during assembling of the system. The energy minimization step is necessary to remove bad contacts. Without minimization, the energy of contacting atoms may be high enough to crash the simulation. During minimization, atoms will be moved to find the closest structure with acceptable energy.
+In the molecule, some clashes may appear during assembling of the system. An energy minimization step is crucial to resolve these bad contacts, reducing the potential energy to prevent the simulation from crashing.
 
 #### 1. Create input file for minimization step
 
@@ -361,7 +361,7 @@ To run the heating of the system type in command line:
 
 ### SECTION 5. Equilibration of the histone tails
 
-To simulate the nucleosome properly, one should start with equilibrating of the initially stretched histone tails. To do so, one should run MD simulation with initially stretched histone tails for long enough time to let the tails to condense to nucleosome. The input file for this step (`equil.in`, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/equil.in))) consists of the lines below:
+For accurate nucleosome simulation, it's crucial to begin by equilibrating the initially stretched histone tails. This involves running a molecular dynamics simulation for a sufficient duration to allow the tails to naturally condense onto the nucleosome, ensuring a more realistic starting configuration for detailed study and analysis of nucleosome behavior under various conditions. The input file for this step (`equil.in`, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/equil.in))) consists of the lines below:
 ```
 equilibration
  &cntrl
@@ -414,7 +414,7 @@ To run the simulation, type in the command line:
 
 ### SECTION 6. Production run
 
-The nucleosome with equilibrated tails may be can now. The input file for production run differs from the one for equilibrating of the histone tails by time of simulation and frequency of output. Parameters of productioon run (file `prod.in`, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/prod.in))) are listed below:
+Once the nucleosome's histone tails have been equilibrated through initial simulation, the system is prepared for the production run. The configuration file for the production phase is modified from the equilibration stage primarily in terms of simulation duration and the frequency at which data is recorded. Parameters of productioon run (file `prod.in`, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/prod.in))) are listed below:
 ```
 Production
  &cntrl
@@ -469,7 +469,7 @@ To run the simulation, type in command line:
 
 #### 1. Analysis of RMSD
 
-To analyse the stability of the nucleosome, we use RMSD analysis. CPPTRAJ program implemented into AMBER allows to calculate the RMSD of a molecule during the simulation. To run CPPTRAJ with input topology file of the system we simulate, type in command line:
+To assess the nucleosome's stability, RMSD (Root Mean Square Deviation) analysis is employed using the CPPTRAJ program within AMBER. This tool calculates the molecule's RMSD throughout the simulation, providing insights into its structural consistency. To initiate CPPTRAJ analysis with the system's input topology file, type in command line:
 
 `cpptraj -p dna.top`
 
