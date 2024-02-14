@@ -412,6 +412,8 @@ To run the simulation, type in the command line:
 
 `pmemd.cuda -O -i equil.in -o equil.out -p dna.top -c heat.ncrst -r equil.ncrst -x equil.nc -inf equil.mdinfo -ref dna.crd`
 
+Actual equilibration of histon tails whould take 50-100 times longer. Here we show the work of the model, you can modify nstlim parameter to 1500000 to observe actual histone equilibration.
+
 ### SECTION 6. Production run
 
 Once the nucleosome's histone tails have been equilibrated through initial simulation, the system is prepared for the production run. The configuration file for the production phase is modified from the equilibration stage primarily in terms of simulation duration and the frequency at which data is recorded. Parameters of productioon run (file `prod.in`, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/prod.in))) are listed below:
@@ -464,6 +466,8 @@ DISANG=disang_NaCl.txt
 To run the simulation, type in command line:
 
 `pmemd.cuda -O -i prod.in -o prod.out -p dna.top -c equil.ncrst -r prod.ncrst -x prod.trj -inf prod.mdinfo -ref dna.crd`
+
+Reasonable production run should be 50-100 times longer, here we just show the work of model.
 
 ### SECTION 7. Analysis and visualization of the results
 
