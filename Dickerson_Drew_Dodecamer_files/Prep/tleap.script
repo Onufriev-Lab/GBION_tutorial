@@ -1,0 +1,9 @@
+source leaprc.DNA.OL15
+set default PBradii mbondi3
+loadoff atomic_ions.lib
+loadAmberParams frcmod.ionsjc_tip3p
+mol = loadpdb 1bna.pdb
+addions mol Na+ 36
+addions mol Cl- 14
+saveamberparm mol dna.top dna.crd
+quit
