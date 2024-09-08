@@ -23,19 +23,19 @@ $\Delta G_{el} = -\frac{1}{2} \left(\frac{1}{\epsilon_{in}} -\frac{1}{\epsilon_{
 
 where $\epsilon_{in}$ and $\epsilon_{out}$ are the dielectric constants of the solute and the solvent, respectively, $d_{ij}$ is the distance between solute atoms $i$ and $j$, and $q_{i}$ are the atomic charges. The key parameters modulating the interaction energy are *the effective Born radii* $R_i$. $R_i^{-1}$ characterizes the average degree of solvent exposure of atom $i$.
 
-The GB model does not take into account descrete ions around solute. The ISEXI model extends the GB framework to include explicit ions in simulations with an implicit solvent. It implies additional coefficients to the GB equation:
+The GB model does not take into account descrete ions around solute. The GBION model extends the GB framework to include explicit ions in simulations with an implicit solvent. It implies additional coefficients to the GB equation:
 
 $\Delta G_{el} = -\frac{1}{2} \left(\frac{1}{\mathbf{\epsilon_{in}(a,b)}} -\frac{1}{\epsilon_{out}}\right)\sum_{i,j} \frac{q_{i}q_{j}}{\sqrt{d^2_{ij} + R_{i}R_{j}\exp\left(-d^2_{ij}/(\mathbf {\gamma(a,b)} R_i R_j)\right)}}$
 
-The expression above emphasizes the main idea of the ISEXI model that the functional form of charge-charge interaction is different for charges that are connected through the solute or the solvent. This is achieved by variations of $\mathbf{\epsilon_{in}}$ and $\mathbf{\gamma(a,b)}$  for different pairs of interacting atoms separately: solute-solute, solute-ion and ion-ion.
+The expression above emphasizes the main idea of the GBION model that the functional form of charge-charge interaction is different for charges that are connected through the solute or the solvent. This is achieved by variations of $\mathbf{\epsilon_{in}}$ and $\mathbf{\gamma(a,b)}$  for different pairs of interacting atoms separately: solute-solute, solute-ion and ion-ion.
 
 ### SECTION 2. Preparation of the system for simulations
 
 #### 1. Preparation of the nucleosome structure
 
-This section guides you through obtaining initial structures for nucleosome simulations using implicit solvent/explicit ions model. To get the initial structures for simulations, go to the site ([link](https://zenodo.org/records/8315307)) and download archive. You can also find the nucleosome structure via path: `md_setup/md_protocol/OPC/ff99SB/R3A/01_equil_histone_tails/1_build/nucleosome.pdb`, also available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/nucleosome.pdb)). You can visualize the structure using CHIMERA, just open the `nucleosome.pdb` file using the program. You should see the picture like below:
+This section guides you through obtaining initial structures for nucleosome simulations using implicit solvent/explicit ions model. To get the initial structures for simulations, go to the site ([link](https://zenodo.org/records/8315307)) and download archive. You can also find the nucleosome structure via path: `md_setup/md_protocol/OPC/ff99SB/R3A/01_equil_histone_tails/1_build/nucleosome.pdb`, also available via ([link](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Files/nucleosome.pdb)). You can visualize the structure using CHIMERA, just open the `nucleosome.pdb` file using the program. You should see the picture like below:
 
-![(./Pictures/nucleosome_stretched.png)](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Pictures/nucleosome_stretched.png)
+![(./Pictures/nucleosome_stretched.png)](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Pictures/nucleosome_stretched.png)
 
 For structure preparation, we use the leap script (file tleap.script, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/tleap.script))).
 
