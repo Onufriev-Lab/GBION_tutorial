@@ -33,7 +33,7 @@ The expression above emphasizes the main idea of the GBION model that the functi
 
 #### 1. Preparation of the nucleosome structure
 
-This section guides you through obtaining initial structures for nucleosome simulations using implicit solvent/explicit ions model. To get the initial structures for simulations, go to the site ([link](https://zenodo.org/records/8315307)) and download archive. You can also find the nucleosome structure via path: `md_setup/md_protocol/OPC/ff99SB/R3A/01_equil_histone_tails/1_build/nucleosome.pdb`, also available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Files/nucleosome.pdb)). You can visualize the structure using CHIMERA, just open the `nucleosome.pdb` file using the program. You should see the picture like below:
+This section guides you through obtaining initial structures for nucleosome simulations using implicit solvent/explicit ions model. To get the initial structures for simulations, go to the site ([link](https://zenodo.org/records/8315307)) and download archive. You can also find the nucleosome structure via path: `md_setup/md_protocol/OPC/ff99SB/R3A/01_equil_histone_tails/1_build/nucleosome.pdb`, also available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/nucleosome.pdb)). You can visualize the structure using CHIMERA, just open the `nucleosome.pdb` file using the program. You should see the picture like below:
 
 ![(./Pictures/nucleosome_stretched.png)](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Pictures/nucleosome_stretched.png)
 
@@ -85,7 +85,7 @@ Both are the fugures of the same system, at the second some ions are hidden for 
 
 #### 2. Preparing file with restraints
 
-Since the system is simulated in implicit water there is no periodic boundary conditions for the system. This can not prevent anions diffusing away from the nucleosome since they aren't anchored to the molecule. Here we use standard practice implemented into AMBER package, defining the restraints that are applied to a pair of atoms. Use the file `disang.py` (available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Files/disang.py))) to prepare the restraints.
+Since the system is simulated in implicit water there is no periodic boundary conditions for the system. This can not prevent anions diffusing away from the nucleosome since they aren't anchored to the molecule. Here we use standard practice implemented into AMBER package, defining the restraints that are applied to a pair of atoms. Use the file `disang.py` (available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/disang.py))) to prepare the restraints.
 
 To run the generation of the file, type in command line:
 
@@ -110,7 +110,7 @@ In the molecule, some clashes may appear during assembling of the system. An ene
 
 #### 1. Create input file for minimization step
 
-For minimization process we use pmemd program of AMBER. The input file (`min.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Files/min.in))) for this step consists of the lines presented below.
+For minimization process we use pmemd program of AMBER. The input file (`min.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/min.in))) for this step consists of the lines presented below.
 
 ```
 Minimize
@@ -275,7 +275,7 @@ This goes on upto NSTEP of 2000.
 
 ### SECTION 4. Heating
 
-In this step the system will be heated from 0 K to 300 K linearly. The input file for this step (`heat.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Files/heat.in))) consists of the lines below:
+In this step the system will be heated from 0 K to 300 K linearly. The input file for this step (`heat.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/heat.in))) consists of the lines below:
 ```
 Heat
  &cntrl
@@ -361,7 +361,7 @@ To run the heating of the system type in command line:
 
 ### SECTION 5. Equilibration of the histone tails
 
-For accurate nucleosome simulation, it's crucial to begin by equilibrating the initially stretched histone tails. This involves running a molecular dynamics simulation for a sufficient duration to allow the tails to naturally condense onto the nucleosome, ensuring a more realistic starting configuration for detailed study and analysis of nucleosome behavior under various conditions. The input file for this step (`equil.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Files/equil.in))) consists of the lines below:
+For accurate nucleosome simulation, it's crucial to begin by equilibrating the initially stretched histone tails. This involves running a molecular dynamics simulation for a sufficient duration to allow the tails to naturally condense onto the nucleosome, ensuring a more realistic starting configuration for detailed study and analysis of nucleosome behavior under various conditions. The input file for this step (`equil.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/equil.in))) consists of the lines below:
 ```
 equilibration
  &cntrl
@@ -416,7 +416,7 @@ Actual equilibration of histon tails whould take 50-100 times longer. Here we sh
 
 ### SECTION 6. Production run
 
-Once the nucleosome's histone tails have been equilibrated through initial simulation, the system is prepared for the production run. The configuration file for the production phase is modified from the equilibration stage primarily in terms of simulation duration and the frequency at which data is recorded. Parameters of productioon run (file `prod.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Files/prod.in))) are listed below:
+Once the nucleosome's histone tails have been equilibrated through initial simulation, the system is prepared for the production run. The configuration file for the production phase is modified from the equilibration stage primarily in terms of simulation duration and the frequency at which data is recorded. Parameters of productioon run (file `prod.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/prod.in))) are listed below:
 ```
 Production
  &cntrl
@@ -515,7 +515,7 @@ And to quit from the CPPTRAJ program, type:
 
 `quit`
 
-To visualize the results we have here, we use python libraries NumPy and Matplotlib. One can use any other desired method for graph visualization. The python script we use is (file `rmsd.py`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Files/rmsd.py))) :
+To visualize the results we have here, we use python libraries NumPy and Matplotlib. One can use any other desired method for graph visualization. The python script we use is (file `rmsd.py`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/rmsd.py))) :
 
 ```
 import numpy as np
