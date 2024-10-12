@@ -37,7 +37,7 @@ This section guides you through obtaining initial structures for nucleosome simu
 
 ![(./Pictures/nucleosome_stretched.png)](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Pictures/nucleosome_stretched.png)
 
-For structure preparation, we use the leap script (file tleap.script, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/tleap.script))).
+For structure preparation, we use the leap script (file tleap.script, available via ([link](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Files/tleap.script))).
 
 ```
 source leaprc.DNA.OL15
@@ -80,12 +80,12 @@ To run the script, type in command line:
 `tleap -f tleap.script`
 
 Upon executing the script for nucleosome simulation using the implicit solvent/explicit ions model, you will generate three new files in your working directory: `nuc.top`, `nuc.crd` and `nuc.pdb`. The first file is the system's topology file, detailing the parameters essential for molecular dynamics simulation, including interaction energies. The second file includes the initial coordinates of your system. You can visualize the result using CHIMERA. Just open the `dna.pdb` file using the program. You should see a picture like this:
-![./Pictures/nucleosome_stretched_ions_all.png](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Pictures/nucleosome_stretched_ions_all.png) ![./Pictures/nucleosome_stratched_ions_part.png](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Pictures/nucleosome_stretched_ions_part.png)
+![./Pictures/nucleosome_stretched_ions_all.png](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Pictures/nucleosome_stretched_ions_all.png) ![./Pictures/nucleosome_stratched_ions_part.png](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Pictures/nucleosome_stretched_ions_part.png)
 Both are the fugures of the same system, at the second some ions are hidden for clarity.
 
 #### 2. Preparing file with restraints
 
-Since the system is simulated in implicit water there is no periodic boundary conditions for the system. This can not prevent anions diffusing away from the nucleosome since they aren't anchored to the molecule. Here we use standard practice implemented into AMBER package, defining the restraints that are applied to a pair of atoms. Use the file `disang.py` (available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/disang.py))) to prepare the restraints.
+Since the system is simulated in implicit water there is no periodic boundary conditions for the system. This can not prevent anions diffusing away from the nucleosome since they aren't anchored to the molecule. Here we use standard practice implemented into AMBER package, defining the restraints that are applied to a pair of atoms. Use the file `disang.py` (available via ([link](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Files/disang.py))) to prepare the restraints.
 
 To run the generation of the file, type in command line:
 
@@ -100,9 +100,9 @@ iat=-1,-1,r1=0.0,r2=0.0,r3=240,r4=250,rk2=0.0, rk3=20.0, igr1=5444,5443,5439,375
 ```
 
 Here flag `iresid=0` allows to select individual atoms in the molecule. Flags `iat=-1,-1` make the program read groups of files `igr1` and `igr2` and calculate restraints between their centers of mass. The first group of atoms are 10 closest ones to the center of mass of the whole nucleosome. Distances `r1`, `r2`, `r3` and `r4` define the restraint force graph form:
-![./Pictures/restraints.png](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Pictures/restraints.png)
+![./Pictures/restraints.png](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Pictures/restraints.png)
 From 0 to `r1` force linearly depends on the distance, from `r1` to `r2` parabolically, `r2-r3` is a flat region, from `r3` to `r4`  – parabolically, from `r4` to $\infty$  – linearly. In our case 0-`r3` is a flat region:
-![restraints_flat.png](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Pictures/restraints_flat.png)
+![restraints_flat.png](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Pictures/restraints_flat.png)
 
 ### SECTION 3. Energy minimization
 
@@ -110,7 +110,7 @@ In the molecule, some clashes may appear during assembling of the system. An ene
 
 #### 1. Create input file for minimization step
 
-For minimization process we use pmemd program of AMBER. The input file (`min.in`, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/min.in))) for this step consists of the lines presented below.
+For minimization process we use pmemd program of AMBER. The input file (`min.in`, available via ([link](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Files/min.in))) for this step consists of the lines presented below.
 
 ```
 Minimize
@@ -176,7 +176,7 @@ END
 
 `cut=9999.0` – Cutoff distance of nonbonded interaction calculation in angstroms. The higher the number the more interacting atoms are considered and the more accurate and computationally expensive the calculaition is.
 
-`gbion=3` – turn on ISEXI model
+`gbion=3` – turn on GBION model
 
 `nmropt=1` – turn on distance restraints for ions
 
@@ -275,7 +275,7 @@ This goes on upto NSTEP of 2000.
 
 ### SECTION 4. Heating
 
-In this step the system will be heated from 0 K to 300 K linearly. The input file for this step (`heat.in`, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/heat.in))) consists of the lines below:
+In this step the system will be heated from 0 K to 300 K linearly. The input file for this step (`heat.in`, available via ([link](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Files/heat.in))) consists of the lines below:
 ```
 Heat
  &cntrl
@@ -361,7 +361,7 @@ To run the heating of the system type in command line:
 
 ### SECTION 5. Equilibration of the histone tails
 
-For accurate nucleosome simulation, it's crucial to begin by equilibrating the initially stretched histone tails. This involves running a molecular dynamics simulation for a sufficient duration to allow the tails to naturally condense onto the nucleosome, ensuring a more realistic starting configuration for detailed study and analysis of nucleosome behavior under various conditions. The input file for this step (`equil.in`, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/equil.in))) consists of the lines below:
+For accurate nucleosome simulation, it's crucial to begin by equilibrating the initially stretched histone tails. This involves running a molecular dynamics simulation for a sufficient duration to allow the tails to naturally condense onto the nucleosome, ensuring a more realistic starting configuration for detailed study and analysis of nucleosome behavior under various conditions. The input file for this step (`equil.in`, available via ([link](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Files/equil.in))) consists of the lines below:
 ```
 equilibration
  &cntrl
@@ -416,7 +416,7 @@ Actual equilibration of histon tails whould take 50-100 times longer. Here we sh
 
 ### SECTION 6. Production run
 
-Once the nucleosome's histone tails have been equilibrated through initial simulation, the system is prepared for the production run. The configuration file for the production phase is modified from the equilibration stage primarily in terms of simulation duration and the frequency at which data is recorded. Parameters of productioon run (file `prod.in`, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/prod.in))) are listed below:
+Once the nucleosome's histone tails have been equilibrated through initial simulation, the system is prepared for the production run. The configuration file for the production phase is modified from the equilibration stage primarily in terms of simulation duration and the frequency at which data is recorded. Parameters of productioon run (file `prod.in`, available via ([link](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Files/prod.in))) are listed below:
 ```
 Production
  &cntrl
@@ -515,7 +515,7 @@ And to quit from the CPPTRAJ program, type:
 
 `quit`
 
-To visualize the results we have here, we use python libraries NumPy and Matplotlib. One can use any other desired method for graph visualization. The python script we use is (file `rmsd.py`, available via ([link](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Files/rmsd.py))) :
+To visualize the results we have here, we use python libraries NumPy and Matplotlib. One can use any other desired method for graph visualization. The python script we use is (file `rmsd.py`, available via ([link](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Files/rmsd.py))) :
 
 ```
 import numpy as np
@@ -539,11 +539,11 @@ To run the script, type in command line:
 
 After running the script you should get the graph (file rmsd_nucleosome.png) similar to this one:
 
-![./Pictures/rmsd_nucleosome.png](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Pictures/rmsd_nucleosome.png)
+![./Pictures/rmsd_nucleosome.png](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Pictures/rmsd_nucleosome.png)
 
 The green line emphasizes the average RMSD value. Values are not expected to be more than 5 Å.
 
 #### 2. Visualization of the trajectory.
 
 To visualize the trajectory itself we use program CHIMERA. Open it and choose in upper menu `Tools > MD/Ensemble Analysis > MD movie` For prmtop file choose `dna.top` and for trajectory `prod.trj`. You should see the picture like this:
-![./Pictures/image_DNA_traj.png](https://github.com/EgorBiophys/ISEXI_tutorial/blob/main/Pictures/image_DNA_traj.png)
+![./Pictures/image_DNA_traj.png](https://github.com/EgorBiophys/GBION_tutorial/blob/main/Pictures/image_DNA_traj.png)
