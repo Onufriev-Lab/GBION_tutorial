@@ -8,6 +8,7 @@ Minimize
   ncyc=1000,
   ntpr=100,
   ntwx=0,
+  ntr=1,
   cut=9999.0,
   gbion=3,
   nmropt=1,
