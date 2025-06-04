@@ -167,40 +167,75 @@ END
 ```
 
 `imin=1`  – turn minimization regime on
+
 `ntx=1` – read coordinates from input coordinates file
+
 `igb=8` – specify implicit solvent model GBneck2
+
 `irest=0` – ignore input velocities
+
 `maxcyc=2000` – limit of minimization cycles
+
 `ncyc=1000`  – the number of minimization cycles with the steepest descent algorithm applied. The conjugate gradient algorithm is used for another 1000 steps
+
 `ntpr=100` – write down output every 100 cycles
+
 `ntwx=0` – do not write coordinate trajectory file
+
 `ntr=1` – apply restraints of the group of atoms specified below to the reference coordinates
+
 `cut=9999.0` – Cutoff distance of nonbonded interaction calculation in angstroms. The higher the number the more interacting atoms are considered and the more accurate and computationally expensive the calculaition is. For implicit solvent simulation huge number is usually used.
+
 `gbion=3` – turn on GBION model
+
 `nmropt=1` – turn on distance restraints for ions
+
 `intdiel=1` – internal dielectric of the solute molecule
+
 `gbsa=3` – take into account the energy of the surface tension
+
 **Parameters implemented into GB approximation of interaction energy of different atom pairs:**
+
 `gi_coef_1_p=1,` – $K_{GB}$ for pair solute atom – cation
+
 `gi_coef_1_n=0.05,` – $K_{GB}$ for pair solute atom – anion
+
 `gi_coef_2_pp=1,` – $K_{GB}$ for pair cation – cation
+
 `gi_coef_2_pn=0.05,` – $K_{GB}$ for pair cation – anion
+
 `gi_coef_2_nn=1,` – $K_{GB}$ for pair anion – anion
+
 `intdiel_ion_1_p=36,` – $K_{\epsilon}$ for pair solute atom – cation
+
 `intdiel_ion_1_n=8,` – $K_{\epsilon}$ for pair solute atom – anion
+
 `intdiel_ion_2_pp=36,` – $K_{\epsilon}$ for pair cation – cation
+
 `intdiel_ion_2_pn=8,` – $K_{\epsilon}$ for pair anion – cation
+
 `intdiel_ion_2_nn=8,` – $K_{\epsilon}$ for pair anion – anion
+
 `gb_neckscale_ion_1_p=1,` – $K_{NS}$ for pair solute atom – cation
+
 `gb_neckscale_ion_1_n=1,` – $K_{NS}$ for pair solute atom – anion
+
 `gb_neckscale_ion_2_pp=1,` – $K_{NS}$ for pair cation – cation
+
 `gb_neckscale_ion_2_pn=1,` – $K_{NS}$ for pair anion – cation
+
 `gb_neckscale_ion_2_nn=1,` – $K_{NS}$ for pair anion – anion
+
 **Parameters of restraints**
+
 `&wt type='END'` – no conditions are varied during the simulation
+
 `DISANG=disang_NaCl.txt` – read restraints for ions from file
+
 `RESTRAIN DNA` – specifying restraints for DNA
+
 `0.1` – restraint constant for DNA
+
 `RES 1 24` – specifying residues included into nucleosome, restraints will be applied to these residues.
 
 To run the energy minimization change working directory to `Dickerson_Drew_Dodecamer_files` and type in command line:
@@ -226,7 +261,9 @@ The output file of the simulation (`min.out`) should look like this:
 
   [-O]verwriting output
 ```
+
 and so on. If the simulation goes as should, there will be a section with results of the simulation:
+
 ```
 --------------------------------------------------------------------------------
    4.  RESULTS
@@ -243,11 +280,13 @@ and so on. If the simulation goes as should, there will be a section with result
  NMR restraints: Bond =    0.000   Angle =     0.000   Torsion =     0.000
 ===============================================================================
 ```
+
 This goes on upto NSTEP of 2000.
 
 After the simulation files `min.out`, `min.ncrst` should appear, the last one will be used as a starting point for further simulations.
 ### 2.3 Heating
 In this step the system will be heated from 0 K to 300 K linearly. The input file for this step `heat.in` includes the lines below:
+
 ```
 Heat
  &cntrl
@@ -301,21 +340,37 @@ RES 1 24
 END
 END
 ```
+
 The parameters of the simulation are:
+
 `imin=0` – MD simulation without minimization
+
 `nstlim=20000` – length of the simulation in time steps
+
 `dt=0.002` – time step of simulation in ps
+
 `ntf=2` – turning calculation of the force for SHAKE constrained bonds of
+
 `ntc=2` – Enable SHAKE to constrain all bonds involving hydrogen
+
 `tempi=0.0` – initial temperature of the system in K
+
 `temp0=300.0` – final temperature of the system in K
+
 `ntpr=100` – write values to out file every 100 steps
+
 `ntwx=100` – add snapshot to trajectory file every 100 steps
+
 `ntb=0` – no periodic boundary conditions
+
 `ntp=0` – turning off barostat
+
 `ntt=3` – turning on Langevin thermostat
+
 `gamma_ln=0.05` – Langevin thermostat collision frequency. In case of implicit water also controls speed of atoms
+
 `ig=-1`– random seed for Langevin dynamics
+
 `&wt type='TEMP0', istep1=0, istep2=19999, value1=0.0, value2=300.0` – defining heating of the system from 0 K to 300 K
 
 To run the heating of the system type in command line being in the directory  `Dickerson_Drew_Dodecamer_files`:
@@ -330,6 +385,7 @@ AMBER would produce the next files after this simulation:
 ### 2.4 Equilibration of the system
 
 Now let ions relax around DNA at 300 K. The input file for this step `equil.in` consists of the lines below:
+
 ```
 equilibration
  &cntrl
@@ -377,8 +433,11 @@ DISANG=disang_NaCl.txt
 ```
 
 `irest=1`, `ntx=5`: read coordinates+velocities from `heat.ncrst`.
+
 `nstlim=1 500 000`, `dt=0.001`: 1.5 ns total.
+
 No `RESTRAIN DNA` (unless you wish to restrain DNA lightly; here we allow DNA to sample freely).
+
 Ions remain constrained by `DISANG`.
 
 To run the simulation, type in the command line being in  `Dickerson_Drew_Dodecamer_files`: 
@@ -440,18 +499,18 @@ DISANG=disang_NaCl.txt
 &end
 ```
 
-- `nstlim=2 000 000`, `dt=0.002`: 4 ns production run.
-- `ntpr=500`, `ntwx=500`: print/write output once per 1 ps.
-- DNA is unrestrained; ions remain semi-restrained by `DISANG`.
+* `nstlim=2 000 000`, `dt=0.002`: 4 ns production run.
+* `ntpr=500`, `ntwx=500`: print/write output once per 1 ps.
+* DNA is unrestrained; ions remain semi-restrained by `DISANG`.
 
 Run production simulation:
 
 `pmemd.cuda -O -i prod.in -o prod.out -p dna.top -c equil.ncrst -r prod.ncrst -x prod.trj -inf prod.mdinfo -ref dna.crd`
 
 Outputs:  
-• `prod.out` (energies)  
-• `prod.trj` (trajectory, every 1 ps)  
-• `prod.ncrst` (final snapshot)
+* `prod.out` (energies)
+* `prod.trj` (trajectory, every 1 ps)
+* `prod.ncrst` (final snapshot)
 
 ### 2.6 Analysis of DNA stability
 
