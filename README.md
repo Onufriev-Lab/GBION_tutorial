@@ -4,7 +4,7 @@ This tutorial aims to demonstrate simulation of a DNA in implicit solvent in com
 
 The outline of this tutorial:
 1. Brief introduction into GBION model
-2. Instruction for simulation of Dickerson-Drew dodecamer using the model
+2. **Part 1**: Instruction for simulation of Dickerson-Drew dodecamer using the model
 	1. Preparing the topology, initial coordinates and restraints files for simulation
 	2. Energy minimization
 	3. Heating the system
@@ -12,7 +12,7 @@ The outline of this tutorial:
 	5. Production run
 	6. Analysis of the DNA stability
 	7. Visualization of trajectory using CHIMERA
-3. To be updated.
+3. **Part 2**: Instruction for simulation of the nucleosome using the model (To be updated)
 ## 1. Brief introduction
 Large systems, such as nucleosomes, require 5- or 6-digits numbers of water molecules for the proper simulation with explicit water model. Another approach to treating water (implicit water model) allows taking water into account as a continuous environment around the molecule. The solvation free energy of the solvated molecules defines their behavior in the solution. The solvation energy $\Delta G_{solv}$ can be represented as a sum of electrostatic $\Delta G_{el}$ and non-polar $\Delta G_{np}$ contributions:
 
