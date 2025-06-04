@@ -114,7 +114,7 @@ If you prefer, run the provided script:
 
 `bash prep.sh`
 
-This will auto-generate both `dna.top/dna.crd/dna.pdb` and `disang_NaCl.txt` and copy up.
+This will auto-generate `dna.top`,`dna.crd`,`dna.pdb` and `disang_NaCl.txt` and copy up.
 
 ### 2.2 Energy minimization
 
