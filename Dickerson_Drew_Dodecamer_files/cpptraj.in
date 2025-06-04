@@ -1,0 +1,5 @@
+trajin prod.trj
+rms ToFirst :1-24&!@H= out rms_dna.txt
+run
+quit
+
