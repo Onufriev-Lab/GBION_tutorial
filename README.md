@@ -1,116 +1,123 @@
-## Simulation of large systems using implicit solvent/explicit ions model
+# Tutorial GBION model
 
-This tutorial is designed to guide users through simulating a large DNA system (specifically, a nucleosome) using an implicit solvent model in combination with explicit ions implemented into the AMBER software package. The guide targets users with a foundational understanding of molecular dynamics (MD) simulations and requires Python installed with the NumPy and Matplotlib libraries, as well as the CHIMERA program([link for downloading](https://www.cgl.ucsf.edu/chimera/download.html)).
+This tutorial aims to demonstrate simulation of a DNA in implicit solvent in combination with explicit ions. We assume that user has basic skills of running MD simulations using AMBER package. It also requires installing python with NumPy and Matplotlib libraries and CHIMERA([link for downloading](https://www.cgl.ucsf.edu/chimera/download.html)).
 
-The tutorial is structured to guide participants through the entire process of simulating a nucleosome. It consists of the steps below:
-
-1. Preparing the system with nucleosome for the simulations
-2. Preparing input files for the simulation of nucleosome
-3. Simulation of the nucleosome using implicit water/explicit ions model
-4. Analysis of the nucleosome stability
-5. Visualization of ion distribution around DNA using CHIMERA
-
-### SECTION 1. Brief introduction
-Simulating large systems like nucleosomes traditionally requires a significant number (5- or 6-digits) of water molecules for accuracy, presenting computational challenges. An alternative, the implicit water model, represents water as a continuous medium, simplifying simulations. The solvation free energy, critical for understanding molecular behavior in solution ($\Delta G_{solv}$), comprises electrostatic ($\Delta G_{el}$) and non-polar ($\Delta G_{np}$) contributions, calculated separately:
+The outline of this tutorial:
+1. Brief introduction into GBION model
+2. Instruction for simulation of Dickerson-Drew dodecamer using the model
+	1. Preparing the topology, initial coordinates and restraints files for simulation
+	2. Energy minimization
+	3. Heating the system
+	4. Equilibration of the DNA in ionic solution
+	5. Production run
+	6. Analysis of the DNA stability
+	7. Visualization of trajectory using CHIMERA
+3. To be updated.
+## 1. Brief introduction
+Large systems, such as nucleosomes, require 5- or 6-digits numbers of water molecules for the proper simulation with explicit water model. Another approach to treating water (implicit water model) allows taking water into account as a continuous environment around the molecule. The solvation free energy of the solvated molecules defines their behavior in the solution. The solvation energy $\Delta G_{solv}$ can be represented as a sum of electrostatic $\Delta G_{el}$ and non-polar $\Delta G_{np}$ contributions:
 
 $\Delta G_{solv} = \Delta G_{el} + \Delta G_{np}$ 
 
-One of the most popular approximation to calculating $\Delta G_{np}$ is based on the assumption that $\Delta G_{np}$ is proportional to the solvent-accessible surface area (SASA).
+which are estimated independently in most cases. One of the most popular approximation to calculating $\Delta G_{np}$ is based on the assumption that $\Delta G_{np}$ is proportional to the solvent-accessible surface area (SASA).
 
-The generalized Born (GB) model is a common method for estimating $\Delta G_{el}$, effectively describing topologically connected structures. The canonical GB approximation is based on the equation originally proposed by Still *et al.*:
+One of the most widely used approximation for calculation $\Delta G_{el}$ is the generalized Born (GB) model. The canonical GB approximation is based on the equation originally proposed by Still *et al.*:
 
 $\Delta G_{el} = -\frac{1}{2} \left(\frac{1}{\epsilon_{in}} -\frac{1}{\epsilon_{out}}\right)\sum_{i,j} \frac{q_{i}q_{j}}{\sqrt{d^2_{ij} + R_{i}R_{j}\exp\left(-d^2_{ij}/(4 R_i R_j)\right)}}$,
 
 where $\epsilon_{in}$ and $\epsilon_{out}$ are the dielectric constants of the solute and the solvent, respectively, $d_{ij}$ is the distance between solute atoms $i$ and $j$, and $q_{i}$ are the atomic charges. The key parameters modulating the interaction energy are *the effective Born radii* $R_i$. $R_i^{-1}$ characterizes the average degree of solvent exposure of atom $i$.
 
-The GB model does not take into account descrete ions around solute. The GBION model extends the GB framework to include explicit ions in simulations with an implicit solvent. It implies additional coefficients to the GB equation:
+The GB model describes behaviour of the topologically connected structures really well, but it does not take into account descrete ions around solute. The GBION model was developed as an extension of GB model to simulate ions around DNA with implicit solvent. It implies additional coefficients to the GB equation:
 
 $\Delta G_{el} = -\frac{1}{2} \left(\frac{1}{\mathbf{\epsilon_{in}(a,b)}} -\frac{1}{\epsilon_{out}}\right)\sum_{i,j} \frac{q_{i}q_{j}}{\sqrt{d^2_{ij} + R_{i}R_{j}\exp\left(-d^2_{ij}/(\mathbf {\gamma(a,b)} R_i R_j)\right)}}$
 
 The expression above emphasizes the main idea of the GBION model that the functional form of charge-charge interaction is different for charges that are connected through the solute or the solvent. This is achieved by variations of $\mathbf{\epsilon_{in}}$ and $\mathbf{\gamma(a,b)}$  for different pairs of interacting atoms separately: solute-solute, solute-ion and ion-ion.
 
-### SECTION 2. Preparation of the system for simulations
+## 2. SImulation of Dickerson-Drew B-DNA Dodecamer implicit solvent/explicit ions model
 
-#### 1. Preparation of the nucleosome structure
+### 2.1 Preparation of the system for simulations
 
-This section guides you through obtaining initial structures for nucleosome simulations using implicit solvent/explicit ions model. To get the initial structures for simulations, go to the site ([link](https://zenodo.org/records/8315307)) and download archive. You can also find the nucleosome structure via path: `md_setup/md_protocol/OPC/ff99SB/R3A/01_equil_histone_tails/1_build/nucleosome.pdb`, also available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/nucleosome.pdb)). You can visualize the structure using CHIMERA, just open the `nucleosome.pdb` file using the program. You should see the picture like below:
+#### 2.1.1 Preparation of the DNA for simulations
 
-![(./Pictures/nucleosome_stretched.png)](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Pictures/nucleosome_stretched.png)
-
-For structure preparation, we use the leap script (file tleap.script, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Files/tleap.script))).
-
+1. **Download “1BNA” (Dickerson-Drew dodecamer)** from RCSB: [https://www.rcsb.org/structure/1BNA](https://www.rcsb.org/structure/1BNA) or use the bundled file in `Dickerson_Drew_Dodecamer_files/Prep/1bna.pdb`.
+2. **Remove waters (if you downloaded from RCSB):**
+    - Open `1bna.pdb` in Chimera.
+    - Select → Residue → HOH (select all water molecules).
+    - Actions → Atoms/Bonds → Delete.
+    - File → Save PDB as “1bna.pdb”
+The version in `Dickerson_Drew_Dodecamer_files/Prep` is already water-free.
+#### 2.1.2 Building topology + placing ions using tleap
+In directory `Dickerson_Drew_Dodecamer_files/Prep`, see a file (or create your own) named `tleap.script` with:
 ```
 source leaprc.DNA.OL15
-source leaprc.protein.ff14SB
-set default PBradii mbondi3
-loadAmberParams frcmod.ionsjc_tip4pew
+loadoff atomic_ions.lib
 source leaprc.water.opc
-mol = loadpdb nucleosome.pdb
-addions mol Na+ 5223
-addions mol Cl- 5093
+set default PBradii mbondi3
+mol = loadpdb 1bna.pdb
+addions mol Na+ 36
+addions mol Cl- 14
 saveamberparm mol dna.top dna.crd
 savepdb mol dna.pdb
 quit
 ```
 
-details of the script:
+`source leaprc.DNA.OL15` – load the OL15 DNA force field.
+`loadoff atomic_ions.lib` & `source leaprc.water.opc`: load ion parameters.
+`set default PBradii mbondi3` – use mbondi3 radii (suitable for implicit solvent we use).
+`mol = loadpdb 1bna.pdb` – loading structure of DNA
+`addions mol Na+ 36` & `addions mol Cl- 14`: add 36 sodium and 14 chloride ions to neutralize and mimic roughly 150 mM.
+`saveamberparm mol dna.top dna.crd` – saving topology and initial coordinates of the structure for simulation
+`savepdb mol dna.pdb` – saving the system to PDB file
 
-`source leaprc.DNA.OL15` – loading the force field for DNA
-
-`source leaprc.protein.ff14SB` – loading force field for histone proteins
-
-`set default PBradii mbondi3` – setting the default PBradii to mbondi3 – this fits implicit water model we use here
-
-`loadAmberParams frcmod.ionsjc_tip4pew`  – loading ion parameters, that were used for optimization of implicit water model parameters
-
-`source leaprc.water.opc `– loading the library that contains ions
-
-`mol = loadpdb nucleosome.pdb` – loading structure of nucleosome
-
-`addions mol Na+ 5223` – adding cations to the nucleosome structure
-
-`addions mol Cl- 5093` – adding anions to the nucleosome structure
-
-`saveamberparm mol nuc.top nuc.crd` – saving topology and initial coordinates of the structure for simulation
-
-`savepdb mol nuc.pdb` – saving the system to PDB file
-
-To run the script, type in command line:
+To run the script, change working directory to `Dickerson_Drew_Dodecamer_files/Prep`and type in command line:
 
 `tleap -f tleap.script`
 
-Upon executing the script for nucleosome simulation using the implicit solvent/explicit ions model, you will generate three new files in your working directory: `nuc.top`, `nuc.crd` and `nuc.pdb`. The first file is the system's topology file, detailing the parameters essential for molecular dynamics simulation, including interaction energies. The second file includes the initial coordinates of your system. You can visualize the result using CHIMERA. Just open the `dna.pdb` file using the program. You should see a picture like this:
-![./Pictures/nucleosome_stretched_ions_all.png](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Pictures/nucleosome_stretched_ions_all.png) ![./Pictures/nucleosome_stratched_ions_part.png](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Pictures/nucleosome_stretched_ions_part.png)
-Both are the fugures of the same system, at the second some ions are hidden for clarity.
+Output:  
+• `dna.top` (AMBER topology)  
+• `dna.crd` (initial coordinates)
+• `dna.pdb` (PDB file suitable for visualization of the initial state of the system)
+#### 2.1.3 Generating distance-restraints for ions (disang.py)
 
-#### 2. Preparing file with restraints
-
-Since the system is simulated in implicit water there is no periodic boundary conditions for the system. This can not prevent anions diffusing away from the nucleosome since they aren't anchored to the molecule. Here we use standard practice implemented into AMBER package, defining the restraints that are applied to a pair of atoms. Use the file `disang.py` (available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/disang.py))) to prepare the restraints.
-
-To run the generation of the file, type in command line:
+Implicit‐solvent MD has no periodic box—ions would drift away. We use distance‐restraints to keep ions near the DNA. In the same `Prep/` directory type:
 
 `python disang.py`
 
-After this you will get a file with restraints. It contains of a number of the repetitive lines:
+This produces `disang_NaCl.txt`, containing blocks like:
 ```
 &rst
 iresid=0,
-iat=-1,-1,r1=0.0,r2=0.0,r3=240,r4=250,rk2=0.0, rk3=20.0, igr1=5444,5443,5439,3751,3749,3747,3746,3745,2169,2168,igr2=24946
-/
+  iat=-1,-1,r1=0.0,r2=0.0,r3=40,r4=50,rk2=0.0, rk3=20.0,
+igr1=588,545,209,186,166,153,140,139,134,108,igr2=808
+ /
 ```
 
-Here flag `iresid=0` allows to select individual atoms in the molecule. Flags `iat=-1,-1` make the program read groups of files `igr1` and `igr2` and calculate restraints between their centers of mass. The first group of atoms are 10 closest ones to the center of mass of the whole nucleosome. Distances `r1`, `r2`, `r3` and `r4` define the restraint force graph form:
-![./Pictures/restraints.png](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Pictures/restraints.png)
+- `iresid=0`: atom indices are specified directly.
+- `iat=-1,-1`: instructs AMBER to read `igr1` and `igr2` groups, then restrain their centers of mass.  
+    • `igr1`: (set of 10 atoms) → DNA’s geometric center.  
+    • `igr2`: index of an ion.
+- `r1=0.0, r2=0.0, r3=40, r4=50`: define a flat-bottom restraint (0–40 Å flat, then a parabola up to 50 Å).
+- `rk3=20.0`: force constant (20 kcal · mol<sup>−1</sup> · Å<sup>−2</sup>) as atoms go from 40→50 Å.
+
+In general the graphs for restraining force on the distance looks like this:
+![[restraints.png|400]]
 From 0 to `r1` force linearly depends on the distance, from `r1` to `r2` parabolically, `r2-r3` is a flat region, from `r3` to `r4`  – parabolically, from `r4` to $\infty$  – linearly. In our case 0-`r3` is a flat region:
-![restraints_flat.png](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Pictures/restraints_flat.png)
+![[restraints_flat.png|400]]
 
-### SECTION 3. Energy minimization
+Copy `dna.*` and `disang_NaCl.txt` up one level:
 
-In the molecule, some clashes may appear during assembling of the system. An energy minimization step is crucial to resolve these bad contacts, reducing the potential energy to prevent the simulation from crashing.
+`cp dna.* ../ cp *.txt ../`
 
-#### 1. Create input file for minimization step
+If you prefer, run the provided script:
 
-For minimization process we use pmemd program of AMBER. The input file (`min.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/min.in))) for this step consists of the lines presented below.
+`bash prep.sh`
+
+This will auto-generate both `dna.top/dna.crd/dna.pdb` and `disang_NaCl.txt` and copy up.
+
+### 2.2 Energy minimization
+
+In the molecule, some clashes may appear during assembling of the system. The energy minimization step is necessary to remove bad contacts. Without minimization, the energy of contacting atoms may be high enough to crash the simulation. During minimization, atoms will be moved to find the closest structure with acceptable energy.
+
+For minimization process we use pmemd.cuda program of AMBER. The input file `min.in` for this step provided in `Dickerson_Drew_Dodecamer_files/` consists of the lines presented below:
 
 ```
 Minimize
@@ -128,6 +135,7 @@ Minimize
   gbion=3,
   nmropt=1,
   intdiel=1,
+  gbsa=3,
   gi_coef_1_p=1,
   gi_coef_1_n=0.05,
   gi_coef_2_pp=1,
@@ -143,98 +151,60 @@ Minimize
   gb_neckscale_ion_2_pp=1,
   gb_neckscale_ion_2_pn=1,
   gb_neckscale_ion_2_nn=1,
-  gbsa=3,
  /
  &wt type='END',
  /
 DISANG=disang_NaCl.txt
 &end
-RESTRAIN NUCLEOSOME
+RESTRAIN DNA
 20.0
-RES 1 1264
+RES 1 24
 END
 END
 ```
 
 `imin=1`  – turn minimization regime on
-
 `ntx=1` – read coordinates from input coordinates file
-
 `igb=8` – specify implicit solvent model GBneck2
-
 `irest=0` – ignore input velocities
-
 `maxcyc=2000` – limit of minimization cycles
-
 `ncyc=1000`  – the number of minimization cycles with the steepest descent algorithm applied. The conjugate gradient algorithm is used for another 1000 steps
-
 `ntpr=100` – write down output every 100 cycles
-
 `ntwx=0` – do not write coordinate trajectory file
-
 `ntr=1` – apply restraints of the group of atoms specified below to the reference coordinates
-
-`cut=9999.0` – Cutoff distance of nonbonded interaction calculation in angstroms. The higher the number the more interacting atoms are considered and the more accurate and computationally expensive the calculaition is.
-
+`cut=9999.0` – Cutoff distance of nonbonded interaction calculation in angstroms. The higher the number the more interacting atoms are considered and the more accurate and computationally expensive the calculaition is. For implicit solvent simulation huge number is usually used.
 `gbion=3` – turn on GBION model
-
 `nmropt=1` – turn on distance restraints for ions
-
 `intdiel=1` – internal dielectric of the solute molecule
-
 `gbsa=3` – take into account the energy of the surface tension
-
 **Parameters implemented into GB approximation of interaction energy of different atom pairs:**
-
 `gi_coef_1_p=1,` – $K_{GB}$ for pair solute atom – cation
-
 `gi_coef_1_n=0.05,` – $K_{GB}$ for pair solute atom – anion
-
 `gi_coef_2_pp=1,` – $K_{GB}$ for pair cation – cation
-
 `gi_coef_2_pn=0.05,` – $K_{GB}$ for pair cation – anion
-
 `gi_coef_2_nn=1,` – $K_{GB}$ for pair anion – anion
-
 `intdiel_ion_1_p=36,` – $K_{\epsilon}$ for pair solute atom – cation
-
 `intdiel_ion_1_n=8,` – $K_{\epsilon}$ for pair solute atom – anion
-
 `intdiel_ion_2_pp=36,` – $K_{\epsilon}$ for pair cation – cation
-
 `intdiel_ion_2_pn=8,` – $K_{\epsilon}$ for pair anion – cation
-
 `intdiel_ion_2_nn=8,` – $K_{\epsilon}$ for pair anion – anion
-
 `gb_neckscale_ion_1_p=1,` – $K_{NS}$ for pair solute atom – cation
-
 `gb_neckscale_ion_1_n=1,` – $K_{NS}$ for pair solute atom – anion
-
 `gb_neckscale_ion_2_pp=1,` – $K_{NS}$ for pair cation – cation
-
 `gb_neckscale_ion_2_pn=1,` – $K_{NS}$ for pair anion – cation
-
 `gb_neckscale_ion_2_nn=1,` – $K_{NS}$ for pair anion – anion
-
 **Parameters of restraints**
-
 `&wt type='END'` – no conditions are varied during the simulation
-
 `DISANG=disang_NaCl.txt` – read restraints for ions from file
+`RESTRAIN DNA` – specifying restraints for DNA
+`0.1` – restraint constant for DNA
+`RES 1 24` – specifying residues included into nucleosome, restraints will be applied to these residues.
 
-`RESTRAIN NUCLEOSOME` – specifying restraints for nucleosome
-
-`20.0` – restraint constant for nucleosome
-
-`RES 1 1264` – specifying residues included into nucleosome, restraints will be applied to these restraints.
-
-#### 2. Run the energy minimization
-
-To run the energy minimization type in command line:
+To run the energy minimization change working directory to `Dickerson_Drew_Dodecamer_files` and type in command line:
 
 `pmemd.cuda -O -i min.in -o min.out -p dna.top -c dna.crd -r min.ncrst -inf min.mdinfo -ref dna.crd`
 
-Here flag `-O` induces overwriting the output files, `-i min.in` specifies file with input parameters, `-o min.out` specifies file, where output values will be written, `-p dna.top` specifies topology file, `-c dna.crd` – file with initial coordinates, `-r min.ncrst` – file with final coordinates, `-inf min.mdinfo` – file with intermediate values of energies, `-ref dna.crd` – reference coordinates for restraints for nucleosome atoms.
+Here flag `-O` induces overwriting the output files, `-i min.in` specifies file with input parameters, `-o min.out` specifies file, where output values will be written, `-p dna.top` specifies topology file, `-c dna.crd` – file with initial coordinates, `-r min.ncrst` – file with final coordinates, `-inf min.mdinfo` – file with intermediate values of energies and performance metrics, `-ref dna.crd` – reference coordinates for restraints for DNA atoms.
 
 The output file of the simulation (`min.out`) should look like this:
 ```
@@ -248,7 +218,7 @@ The output file of the simulation (`min.out`) should look like this:
 | Run on 01/05/2024 at 20:19:55
 
 |   Executable path: pmemd
-| Working directory: /data/kolesnikov/E_0677_nucleosome_conses_GBions/GBion_K_gbsa
+| Working directory: /home/YOUR_DIRECTORY
 |          Hostname: strugatsky.cbb.lan
 
   [-O]verwriting output
@@ -262,20 +232,19 @@ and so on. If the simulation goes as should, there will be a section with result
   
   
    NSTEP       ENERGY          RMS            GMAX         NAME    NUMBER
-      1       3.5000E+07     2.3299E+06     4.6750E+08     HE3       543
-  
- BOND    =    18843.4733  ANGLE   =    13343.7741  DIHED      =    20653.3169
- VDWAALS = 34997534.8245  EEL     = -2426200.6972  EGB        =  2365964.3321
- 1-4 VDW =    11240.4517  1-4 EEL =    -1315.4897  RESTRAINT  =        0.0000
- ESURF   =      265.0066
+      1      -5.3174E+03     1.4958E+01     8.2467E+01     C5        204
+
+ BOND    =       83.8034  ANGLE   =      189.4818  DIHED      =      613.8166
+ VDWAALS =     -374.4397  EEL     =     3356.1615  EGB        =    -6438.5121
+ 1-4 VDW =      254.7749  1-4 EEL =    -3002.4574  RESTRAINT  =        0.0000
  NMR restraints: Bond =    0.000   Angle =     0.000   Torsion =     0.000
 ===============================================================================
 ```
 This goes on upto NSTEP of 2000.
 
-### SECTION 4. Heating
-
-In this step the system will be heated from 0 K to 300 K linearly. The input file for this step (`heat.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/heat.in))) consists of the lines below:
+After the simulation files `min.out`, `min.ncrst` should appear, the last one will be used as a starting point for further simulations.
+### 2.3 Heating
+In this step the system will be heated from 0 K to 300 K linearly. The input file for this step `heat.in` includes the lines below:
 ```
 Heat
  &cntrl
@@ -283,8 +252,8 @@ Heat
   igb=8,
   ntx=1,
   irest=0,
-  nstlim=10000,
-  dt=0.0002,
+  nstlim=20000,
+  dt=0.002,
   ntf=2,
   ntc=2,
   tempi=0.0,
@@ -295,11 +264,13 @@ Heat
   ntb=0,
   ntp=0,
   ntt=3,
-  gamma_ln=0.05,
+  ntr=1,
+  gamma_ln=0.5,
   nmropt=1,
   ig=-1,
   gbion=3,
   intdiel=1,
+  gbsa=3,
   gi_coef_1_p=1,
   gi_coef_1_n=0.05,
   gi_coef_2_pp=1,
@@ -315,53 +286,47 @@ Heat
   gb_neckscale_ion_2_pp=1,
   gb_neckscale_ion_2_pn=1,
   gb_neckscale_ion_2_nn=1,
-  gbsa=3,
  /
-&wt type='TEMP0', istep1=0, istep2=9999, value1=0.0, value2=300.0 /
-&wt type='TEMP0', istep1=9999, istep2=10000, value1=300.0, value2=300.0 /
+&wt type='TEMP0', istep1=0, istep2=19999, value1=0.0, value2=300.0 /
+&wt type='TEMP0', istep1=19999, istep2=20000, value1=300.0, value2=300.0 /
 &wt type='END' /
 DISANG=disang_NaCl.txt
 &end
+RESTRAIN DNA
+0.01
+RES 1 24
+END
+END
 ```
 The parameters of the simulation are:
-
 `imin=0` – MD simulation without minimization
-
-`nstlim=10000` – length of the simulation in time steps
-
-`dt=0.0002` – time step of simulation in ps
-
+`nstlim=20000` – length of the simulation in time steps
+`dt=0.002` – time step of simulation in ps
 `ntf=2` – turning calculation of the force for SHAKE constrained bonds of
-
 `ntc=2` – Enable SHAKE to constrain all bonds involving hydrogen
-
 `tempi=0.0` – initial temperature of the system in K
-
 `temp0=300.0` – final temperature of the system in K
-
 `ntpr=100` – write values to out file every 100 steps
-
 `ntwx=100` – add snapshot to trajectory file every 100 steps
-
 `ntb=0` – no periodic boundary conditions
-
 `ntp=0` – turning off barostat
-
 `ntt=3` – turning on Langevin thermostat
-
 `gamma_ln=0.05` – Langevin thermostat collision frequency. In case of implicit water also controls speed of atoms
-
 `ig=-1`– random seed for Langevin dynamics
+`&wt type='TEMP0', istep1=0, istep2=19999, value1=0.0, value2=300.0` – defining heating of the system from 0 K to 300 K
 
-`&wt type='TEMP0', istep1=0, istep2=9999, value1=0.0, value2=300.0` – defining heating of the system from 0 K to 300 K
-
-To run the heating of the system type in command line:
+To run the heating of the system type in command line being in the directory  `Dickerson_Drew_Dodecamer_files`:
 
 `pmemd.cuda -O -i heat.in -o heat.out -p dna.top -c min.ncrst -ref dna.crd -r heat.ncrst -x heat.nc -inf heat.mdinfo`
 
-### SECTION 5. Equilibration of the histone tails
+AMBER would produce the next files after this simulation: 
+* `heat.out` – contains aggregate parameters of the system, such as temperature and energies
+* `heat.nc` – contains time series of the atom coordinates of the system
+* `heat.ncrst` – final coordinates of the system
 
-For accurate nucleosome simulation, it's crucial to begin by equilibrating the initially stretched histone tails. This involves running a molecular dynamics simulation for a sufficient duration to allow the tails to naturally condense onto the nucleosome, ensuring a more realistic starting configuration for detailed study and analysis of nucleosome behavior under various conditions. The input file for this step (`equil.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/equil.in))) consists of the lines below:
+### 2.4 Equilibration of the system
+
+Now let ions relax around DNA at 300 K. The input file for this step `equil.in` consists of the lines below:
 ```
 equilibration
  &cntrl
@@ -369,8 +334,8 @@ equilibration
   igb=8,
   ntx=5,
   irest=1,
-  nstlim=15000,
-  dt=0.001,
+  nstlim=1500000,
+  dt=0.002,
   ntf=2,
   ntc=2,
   temp0=300.0,
@@ -385,6 +350,7 @@ equilibration
   gbion=3,
   nmropt=1,
   intdiel=1,
+  gbsa=3,
   gi_coef_1_p=1,
   gi_coef_1_n=0.05,
   gi_coef_2_pp=1,
@@ -400,7 +366,6 @@ equilibration
   gb_neckscale_ion_2_pp=1,
   gb_neckscale_ion_2_pn=1,
   gb_neckscale_ion_2_nn=1,
-  gbsa=3,
  /
  &wt type='END',
  /
@@ -408,15 +373,24 @@ DISANG=disang_NaCl.txt
 &end
 ```
 
-To run the simulation, type in the command line: 
+`irest=1`, `ntx=5`: read coordinates+velocities from `heat.ncrst`.
+`nstlim=1 500 000`, `dt=0.001`: 1.5 ns total.
+No `RESTRAIN DNA` (unless you wish to restrain DNA lightly; here we allow DNA to sample freely).
+Ions remain constrained by `DISANG`.
+
+To run the simulation, type in the command line being in  `Dickerson_Drew_Dodecamer_files`: 
 
 `pmemd.cuda -O -i equil.in -o equil.out -p dna.top -c heat.ncrst -r equil.ncrst -x equil.nc -inf equil.mdinfo -ref dna.crd`
 
-Actual equilibration of histon tails whould take 50-100 times longer. Here we show the work of the model, you can modify nstlim parameter to 1500000 to observe actual histone equilibration.
+Outputs:  
+• `equil.out`  
+• `equil.nc` (1.5 ns trajectory)  
+• `equil.ncrst` (final coordinates+velocities)
 
-### SECTION 6. Production run
+### 2.5 Production run
 
-Once the nucleosome's histone tails have been equilibrated through initial simulation, the system is prepared for the production run. The configuration file for the production phase is modified from the equilibration stage primarily in terms of simulation duration and the frequency at which data is recorded. Parameters of productioon run (file `prod.in`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/prod.in))) are listed below:
+After equilibration, run production MD to sample DNA conformation. See in `Dickerson_Drew_Dodecamer_files` or create file `prod.in`:
+
 ```
 Production
  &cntrl
@@ -424,13 +398,13 @@ Production
   igb=8,
   ntx=5,
   irest=1,
-  nstlim=50000,
+  nstlim=5000000,
   dt=0.002,
   ntf=2,
   ntc=2,
   temp0=300.0,
-  ntpr=50,
-  ntwx=50,
+  ntpr=500,
+  ntwx=500,
   cut=9999.0,
   ntb=0,
   ntp=0,
@@ -440,6 +414,7 @@ Production
   gbion=3,
   nmropt=1,
   intdiel=1,
+  gbsa=3,
   gi_coef_1_p=1,
   gi_coef_1_n=0.05,
   gi_coef_2_pp=1,
@@ -455,7 +430,6 @@ Production
   gb_neckscale_ion_2_pp=1,
   gb_neckscale_ion_2_pn=1,
   gb_neckscale_ion_2_nn=1,
-  gbsa=3,
  /
  &wt type='END',
  /
@@ -463,87 +437,64 @@ DISANG=disang_NaCl.txt
 &end
 ```
 
-To run the simulation, type in command line:
+- `nstlim=2 000 000`, `dt=0.002`: 4 ns production run.
+- `ntpr=500`, `ntwx=500`: print/write output once per 1 ps.
+- DNA is unrestrained; ions remain semi-restrained by `DISANG`.
+
+Run production simulation:
 
 `pmemd.cuda -O -i prod.in -o prod.out -p dna.top -c equil.ncrst -r prod.ncrst -x prod.trj -inf prod.mdinfo -ref dna.crd`
 
-Reasonable production run should be 50-100 times longer, here we just show the work of model.
+Outputs:  
+• `prod.out` (energies)  
+• `prod.trj` (trajectory, every 1 ps)  
+• `prod.ncrst` (final snapshot)
 
-### SECTION 7. Analysis and visualization of the results
+### 2.6 Analysis of DNA stability
 
-#### 1. Analysis of RMSD
+Use **CPPTRAJ** to compute RMSD of DNA heavy atoms over the production trajectory. Input file `cpptraj.in` for this analysis should consist of the lines below:
 
-To assess the nucleosome's stability, RMSD (Root Mean Square Deviation) analysis is employed using the CPPTRAJ program within AMBER. This tool calculates the molecule's RMSD throughout the simulation, providing insights into its structural consistency. To initiate CPPTRAJ analysis with the system's input topology file, type in command line:
-
-`cpptraj -p dna.top`
-
-You should see the output that looks like showed below:
-  
 ```
-CPPTRAJ: Trajectory Analysis. V5.1.0
-    ___  ___  ___  ___
-     | \/ | \/ | \/ | 
-    _|_/\_|_/\_|_/\_|_
-  
-| Date/time: 01/11/24 15:30:39
-| Available memory: 15.560 GB
-  
-Reading 'dna.top' as Amber Topology
-Radius Set: ArgH and AspGluO modified Bondi2 radii (mbondi3)
-Loading previous history from log 'cpptraj.log'
+trajin prod.trj
+rms ToFirst :1-24&!@H= out rms_dna.txt
+run
+quit
 ```
 
-To load initial structure for reference type:
+To run the analysis, type:
 
-`trajin dna.crd`
+`cpptraj -p dna.top < cpptraj.in`
 
-Then to load the trajectory for further analysis type:
-
-`trajin prod.trj
-
-After loading the trajectory type in command line:
-
-`rms ToFirst :40-133,161-237,254-354,398-485,527-620,648-724,741-841,885-972,975-1264 out rms_Nucleosome_no_tails.txt`
-
-This command defines atoms that are taken into account in calculation. These are residues of the nucleosome, histone tails excluded.
-
-To run the calculation you defined, type:
-
-`run`
-
-And to quit from the CPPTRAJ program, type:
-
-`quit`
-
-To visualize the results we have here, we use python libraries NumPy and Matplotlib. One can use any other desired method for graph visualization. The python script we use is (file `rmsd.py`, available via ([link](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Nucleosome_files/rmsd.py))) :
+To visualize the data, use python script:
 
 ```
 import numpy as np
 import matplotlib.pyplot as plt
-rmsd = np.loadtxt('rms_Nucleosome_no_tails.txt', skiprows=2)
-plt.figure(figsize=(12,8))
-plt.plot(rmsd[:,0]/1000, rmsd[:,1], label = 'Major', color='#6a137a', linewidth=2)
-plt.xticks(fontsize=20)
-plt.yticks(fontsize=20)
-plt.xlim(0,10)
-plt.xlabel('Time (ns)', fontsize=30)
-plt.ylabel('RMSD nucleosome ($\AA$)', fontsize=30)
-plt.axhline(np.average(rmsd[:,1]), color='#2E7D32', linewidth=3)
-plt.savefig('rmsd_nucleosome.png', bbox_inches='tight')
-print(np.average(rmsd[:,1]))
+
+data = np.loadtxt('rms_dna.txt', skiprows=2)
+time = data[:,0]  # ps
+rms  = data[:,1]  # Å
+
+plt.figure(figsize=(10,6))
+plt.plot(time, rms, linewidth=2)
+plt.xlabel('Time (ps)', fontsize=14)
+plt.ylabel('RMSD (Å)', fontsize=14)
+plt.title('DNA RMSD Over 4 ns Production', fontsize=16)
+plt.axhline(np.mean(rms), linestyle='--', color='gray')
+plt.tight_layout()
+plt.savefig('rmsd_dna.png', dpi=300)
 ```
 
-To run the script, type in command line:
+To run the provided script, type:
 
-`python rmsd.py`
+`python graph.py`
 
-After running the script you should get the graph (file rmsd_nucleosome.png) similar to this one:
+The file `rmsd_dna.png` would contain the graph of RMSD vs. time. It should look like this: ![[rmsd_dna 4.png]]
+### 2.7 Visualization of trajectory using Chimera
 
-![./Pictures/rmsd_nucleosome.png](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Pictures/rmsd_nucleosome.png)
-
-The green line emphasizes the average RMSD value. Values are not expected to be more than 5 Å.
-
-#### 2. Visualization of the trajectory.
-
-To visualize the trajectory itself we use program CHIMERA. Open it and choose in upper menu `Tools > MD/Ensemble Analysis > MD movie` For prmtop file choose `dna.top` and for trajectory `prod.trj`. You should see the picture like this:
-![./Pictures/image_DNA_traj.png](https://github.com/Onufriev-Lab/GBION_tutorial/blob/main/Pictures/image_DNA_traj.png)
+1. **Open** Chimera.
+2. **Tools** → **MD/Ensemble Analysis** → **MD Movie**.
+3. **Structure file**: select **dna.top** (AMBER prmtop).
+4. **Trajectory**: select **prod.trj** (MD trajectory).
+5. Click **Play** to observe DNA + ions’ dynamics.
+You should observe something like this:![[Prod_frame 1.png]]
