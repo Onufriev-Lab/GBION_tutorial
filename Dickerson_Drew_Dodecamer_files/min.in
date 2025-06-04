@@ -35,7 +35,7 @@ Minimize
 DISANG=disang_NaCl.txt
 &end
 RESTRAIN DNA
-20.0
+0.1
 RES 1 24
 END
 END
