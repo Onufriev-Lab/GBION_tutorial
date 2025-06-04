@@ -28,6 +28,7 @@ Minimize
   gb_neckscale_ion_2_pp=1,
   gb_neckscale_ion_2_pn=1,
   gb_neckscale_ion_2_nn=1,
+  gbsa=3,
  /
  &wt type='END',
  /
