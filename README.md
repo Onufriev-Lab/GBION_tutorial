@@ -434,7 +434,7 @@ DISANG=disang_NaCl.txt
 
 `irest=1`, `ntx=5`: read coordinates+velocities from `heat.ncrst`.
 
-`nstlim=1 500 000`, `dt=0.001`: 1.5 ns total.
+`nstlim=1 500 000`, `dt=0.002`: 1.5 ns total.
 
 No `RESTRAIN DNA` (unless you wish to restrain DNA lightly; here we allow DNA to sample freely).
 
@@ -446,7 +446,7 @@ To run the simulation, type in the command line being in  `Dickerson_Drew_Dodeca
 
 Outputs:  
 • `equil.out`  
-• `equil.nc` (1.5 ns trajectory)  
+• `equil.nc` (3 ns trajectory)  
 • `equil.ncrst` (final coordinates+velocities)
 
 ### 2.5 Production run
