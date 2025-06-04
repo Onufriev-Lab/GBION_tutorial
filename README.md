@@ -106,7 +106,8 @@ From 0 to `r1` force linearly depends on the distance, from `r1` to `r2` parabol
 
 Copy `dna.*` and `disang_NaCl.txt` up one level:
 
-`cp dna.* ../ cp *.txt ../`
+`cp dna.* ../`
+`cp *.txt ../`
 
 If you prefer, run the provided script:
 
