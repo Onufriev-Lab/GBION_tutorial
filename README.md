@@ -74,9 +74,9 @@ To run the script, change working directory to `Dickerson_Drew_Dodecamer_files/P
 `tleap -f tleap.script`
 
 Output:  
-• `dna.top` (AMBER topology)  
-• `dna.crd` (initial coordinates)
-• `dna.pdb` (PDB file suitable for visualization of the initial state of the system)
+* `dna.top` (AMBER topology)
+* `dna.crd` (initial coordinates)
+* `dna.pdb` (PDB file suitable for visualization of the initial state of the system)
 #### 2.1.3 Generating distance-restraints for ions (disang.py)
 
 Implicit‐solvent MD has no periodic box—ions would drift away. We use distance‐restraints to keep ions near the DNA. In the same `Prep/` directory type:
