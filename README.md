@@ -499,7 +499,7 @@ DISANG=disang_NaCl.txt
 &end
 ```
 
-* `nstlim=2 000 000`, `dt=0.002`: 4 ns production run.
+* `nstlim=5 000 000`, `dt=0.002`: 10 ns production run.
 * `ntpr=500`, `ntwx=500`: print/write output once per 1 ps.
 * DNA is unrestrained; ions remain semi-restrained by `DISANG`.
 
