@@ -101,7 +101,7 @@ igr1=588,545,209,186,166,153,140,139,134,108,igr2=808
 In general the graphs for restraining force on the distance looks like this:
 ![restraints](Pictures/restraints.png)
 From 0 to `r1` force linearly depends on the distance, from `r1` to `r2` parabolically, `r2-r3` is a flat region, from `r3` to `r4`  – parabolically, from `r4` to $\infty$  – linearly. In our case 0-`r3` is a flat region:
-![[restraints_flat.png|400]]
+![restraints_flat](Pictures/restraints_flat.png)
 
 Copy `dna.*` and `disang_NaCl.txt` up one level:
 
@@ -489,7 +489,7 @@ To run the provided script, type:
 
 `python graph.py`
 
-The file `rmsd_dna.png` would contain the graph of RMSD vs. time. It should look like this: ![[rmsd_dna 4.png]]
+The file `rmsd_dna.png` would contain the graph of RMSD vs. time. It should look like this: ![rmsd_dna](Pictures/rmsd_dna.png)
 ### 2.7 Visualization of trajectory using Chimera
 
 1. **Open** Chimera.
@@ -497,4 +497,4 @@ The file `rmsd_dna.png` would contain the graph of RMSD vs. time. It should look
 3. **Structure file**: select **dna.top** (AMBER prmtop).
 4. **Trajectory**: select **prod.trj** (MD trajectory).
 5. Click **Play** to observe DNA + ions’ dynamics.
-You should observe something like this:![[Prod_frame 1.png]]
+You should observe something like this:![Prod_frame](Pictures/Prod_frame.png)
