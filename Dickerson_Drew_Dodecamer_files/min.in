@@ -13,6 +13,7 @@ Minimize
   gbion=3,
   nmropt=1,
   intdiel=1,
+  gbsa=3,
   gi_coef_1_p=1,
   gi_coef_1_n=0.05,
   gi_coef_2_pp=1,
@@ -28,7 +29,6 @@ Minimize
   gb_neckscale_ion_2_pp=1,
   gb_neckscale_ion_2_pn=1,
   gb_neckscale_ion_2_nn=1,
-  gbsa=3,
  /
  &wt type='END',
  /
