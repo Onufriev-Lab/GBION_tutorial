@@ -99,7 +99,7 @@ igr1=588,545,209,186,166,153,140,139,134,108,igr2=808
 - `rk3=20.0`: force constant (20 kcal · mol<sup>−1</sup> · Å<sup>−2</sup>) as atoms go from 40→50 Å.
 
 In general the graphs for restraining force on the distance looks like this:
-Pictures/restraints.png
+![restraints](Pictures/restraints.png)
 From 0 to `r1` force linearly depends on the distance, from `r1` to `r2` parabolically, `r2-r3` is a flat region, from `r3` to `r4`  – parabolically, from `r4` to $\infty$  – linearly. In our case 0-`r3` is a flat region:
 ![[restraints_flat.png|400]]
 
