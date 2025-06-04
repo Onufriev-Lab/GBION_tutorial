@@ -44,6 +44,7 @@ The expression above emphasizes the main idea of the GBION model that the functi
     - Select → Residue → HOH (select all water molecules).
     - Actions → Atoms/Bonds → Delete.
     - File → Save PDB as “1bna.pdb”
+
 The version in `Dickerson_Drew_Dodecamer_files/Prep` is already water-free.
 #### 2.1.2 Building topology + placing ions using tleap
 In directory `Dickerson_Drew_Dodecamer_files/Prep`, see a file (or create your own) named `tleap.script` with:
