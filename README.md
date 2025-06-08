@@ -81,7 +81,19 @@ Output:
 
 Implicit‐solvent MD has no periodic box—ions would drift away. We use distance‐restraints to keep ions near the DNA. In the same `Prep/` directory type:
 
-`python disang.py`
+`python disang.py` – this provided script finds center of mass of a specified molecule, finds specified number of atoms closest to the center of mass and produces file with distance restraints for ions around the molecule. The restraints would limit the distance from the center of mass of spcified number of center atoms to each ion. One can specify parameters below to apply the script to their own molecules:
+
+`Molecule_file = '1bna.pdb'` – specifies PDB-file with simulated biomolecule
+
+`namedisang = "disang_NaCl.txt"` – specifies output restraints file
+
+`Number_of_atoms_for_com = 10` – specifies number of atoms closest to the center of mass of the molecule to restraint ions with
+
+`number_of_ions= 50` – specifies number of ions to restrain
+
+`starting_index_of_ion= 759` – atom index of the first ion to restrain.
+
+**line 50:** `        disang.write("  iat=-1,-1,r1=0.0,r2=0.0,r3=40,r4=50,rk2=0.0, rk3=20.0,\n")` – r3, r4 and rk3 specify parameters explained below.
 
 This produces `disang_NaCl.txt`, containing blocks like:
 ```
