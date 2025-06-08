@@ -1,4 +1,5 @@
 import math
+Molecule_file = '1bna.pdb'
 namedisang = "disang_NaCl.txt"
 Number_of_atoms_for_com = 10
 number_of_ions= 50
@@ -11,7 +12,7 @@ xval = []
 yval = []
 zval = []
 atom_index = []
-with open('1bna.pdb', 'r') as fin:
+with open(Molecule_file, 'r') as fin:
     for line in fin:
         if line.startswith('ATOM'):
             line_vals = line.strip().split()
