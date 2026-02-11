@@ -1,6 +1,6 @@
 # Tutorial GBION model
 
-This tutorial aims to demonstrate simulation of a DNA in implicit solvent in combination with explicit ions. We assume that user has basic skills of running MD simulations using AMBER package. It also requires installing python with NumPy and Matplotlib libraries and CHIMERA([link for downloading](https://www.cgl.ucsf.edu/chimera/download.html)).
+This tutorial aims to demonstrate simulation of a DNA in implicit solvent in combination with explicit ions. We assume that user has basic skills of running MD simulations using AMBER package. It also requires installing python with NumPy and Matplotlib libraries and CHIMERAX([link for downloading](https://www.cgl.ucsf.edu/chimerax/download.html)).
 
 The outline of this tutorial:
 1. Brief introduction into GBION model
@@ -11,8 +11,15 @@ The outline of this tutorial:
 	4. Equilibration of the DNA in ionic solution
 	5. Production run
 	6. Analysis of the DNA stability
-	7. Visualization of trajectory using CHIMERA
-3. **Part 2**: Instruction for simulation of the nucleosome using the model (To be updated)
+	7. Visualization of trajectory using CHIMERAX
+3. **Part 2**: Instruction for simulation of the nucleosome using the model (updating)
+	1. Preparing the topology, initial coordinates and restraints files for simulation
+ 	2. Energy minimization
+  	3. Heating the system
+   	4. Histone tails equilibration
+   	5. Production run
+   	6. Analysis of the nucleosome core stability
+   	7. Visualization of trajectory using CHIMERAX
 ## 1. Brief introduction
 Large systems, such as nucleosomes, require 5- or 6-digits numbers of water molecules for the proper simulation with explicit water model. Another approach to treating water (implicit water model) allows taking water into account as a continuous environment around the molecule. The solvation free energy of the solvated molecules defines their behavior in the solution. The solvation energy $\Delta G_{solv}$ can be represented as a sum of electrostatic $\Delta G_{el}$ and non-polar $\Delta G_{np}$ contributions:
 
