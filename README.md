@@ -528,7 +528,7 @@ Run production simulation:
 
 Outputs:  
 * `prod.out` (energies)
-* `prod.trj` (trajectory, every 1 ps)
+* `prod.nc` (trajectory, every 1 ps)
 * `prod.ncrst` (final snapshot)
 
 ### 2.6 Analysis of DNA stability
