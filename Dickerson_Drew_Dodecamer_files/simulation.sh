@@ -6,6 +6,6 @@ pmemd.cuda -O -i heat.in -o heat.out -p dna.top -c min.ncrst -r heat.ncrst -x he
 
 pmemd.cuda -O -i equil.in -o equil.out -p dna.top -c heat.ncrst -r equil.ncrst -x equil.trj -inf equil.mdinfo
 
-pmemd.cuda -O -i prod.in -o prod.out -p dna.top -c equil.ncrst -r prod.ncrst -x prod.trj -inf prod.mdinfo
+pmemd.cuda -O -i prod.in -o prod.out -p dna.top -c equil.ncrst -r prod.ncrst -x prod.nc -inf prod.mdinfo
 
 ambpdb -p dna.top -c prod.ncrst > prod.pdb
