@@ -1,6 +1,6 @@
 # Tutorial GBION model
 
-This tutorial aims to demonstrate simulation of a DNA in implicit solvent in combination with explicit ions. We assume that user has basic skills of running MD simulations using AMBER package. It also requires installing python with NumPy and Matplotlib libraries and CHIMERAX([link for downloading](https://www.cgl.ucsf.edu/chimerax/download.html)).
+This tutorial aims to demonstrate simulation of a DNA and nucleosome in implicit solvent in combination with explicit ions. We assume that user has basic skills of running MD simulations using AMBER package. It also requires installing python with NumPy and Matplotlib libraries and CHIMERAX([link for downloading](https://www.cgl.ucsf.edu/chimerax/download.html)).
 
 The outline of this tutorial:
 1. Brief introduction into GBION model
@@ -50,7 +50,7 @@ The expression above emphasizes the main idea of the GBION model that the functi
     - Open `1bna.pdb` in Chimera.
     - Select → Residue → HOH (select all water molecules).
     - Actions → Atoms/Bonds → Delete.
-    - File → Save PDB as “1bna.pdb”
+    - File → Save, save as “1bna.pdb”
 
 The version in `Dickerson_Drew_Dodecamer_files/Prep` is already water-free.
 #### 2.1.2 Building topology + placing ions using tleap
@@ -135,6 +135,7 @@ If you prefer, run the provided script:
 
 This will auto-generate `dna.top`,`dna.crd`,`dna.pdb` and `disang_NaCl.txt` and copy up.
 
+The simulation stages and analysis are described below. Script `simulation.sh` generates all the trajectories, but does not provide any analysis.
 ### 2.2 Energy minimization
 
 In the molecule, some clashes may appear during assembling of the system. The energy minimization step is necessary to remove bad contacts. Without minimization, the energy of contacting atoms may be high enough to crash the simulation. During minimization, atoms will be moved to find the closest structure with acceptable energy.
@@ -179,7 +180,7 @@ Minimize
 DISANG=disang_NaCl.txt
 &end
 RESTRAIN DNA
-20.0
+0.1
 RES 1 24
 END
 END
@@ -354,7 +355,7 @@ Heat
 DISANG=disang_NaCl.txt
 &end
 RESTRAIN DNA
-0.01
+0.1
 RES 1 24
 END
 END
@@ -453,7 +454,7 @@ DISANG=disang_NaCl.txt
 
 `irest=1`, `ntx=5`: read coordinates+velocities from `heat.ncrst`.
 
-`nstlim=1 500 000`, `dt=0.002`: 1.5 ns total.
+`nstlim=1 500 000`, `dt=0.002`: 3 ns total.
 
 No `RESTRAIN DNA` (unless you wish to restrain DNA lightly; here we allow DNA to sample freely).
 
@@ -577,7 +578,7 @@ The file `rmsd_dna.png` would contain the graph of RMSD vs. time. It should look
 2. Drag and drop file **dna.pdb**
 3. **Trajectory**: Drag and drop **prod.nc** (MD trajectory), choose`Amber netCDF coordinates` in pop-up window.
 4. Click **Play** to observe DNA + ions’ dynamics.
-You should observe something like this:![Prod_frame](Pictures/Prod_frame.png)
+You should observe something like this:![Prod_frame](Prod_frame_DNA.png)
 
 
 ## 3. SImulation of a nucleosome using GBION model
@@ -585,7 +586,7 @@ You should observe something like this:![Prod_frame](Pictures/Prod_frame.png)
 ### 3.1 Preparation of the system for simulations
 
 #### 3.1.1 Building topology + placing ions using tleap
-It is required to use `Nucleosome.pdb` file as a structure simulated. It can be found in directory `Dickerson_Drew_Dodecamer_files/Prep`. In the same directory see a file (or create your own) named `tleap.script` with:
+It is required to use `Nucleosome.pdb` file as a structure simulated. It can be found in directory `Nucleosome_simulation_files/Prep`. In the same directory see a file (or create your own) named `tleap.script` with:
 ```
 source leaprc.DNA.OL15
 source leaprc.protein.ff19SB
@@ -605,11 +606,11 @@ quit
 `loadoff atomic_ions.lib`, `source leaprc.water.opc` & `loadAmberParams frcmod.ionsjc_tip4pew`: load ion parameters.
 `set default PBradii mbondi3` – use mbondi3 radii (suitable for implicit solvent we use).
 `mol = loadpdb 1bna.pdb` – loading structure of DNA
-`addions mol K+ 5256` & `addions mol Cl- 5119`: add 36 sodium and 14 chloride ions to neutralize and mimic roughly 150 mM.
-`saveamberparm mol dna.top dna.crd` – saving topology and initial coordinates of the structure for simulation
-`savepdb mol dna.pdb` – saving the system to PDB file
+`addions mol K+ 5256` & `addions mol Cl- 5119`: add 5256 potassium and 5119 chloride ions to neutralize and mimic roughly 150 mM.
+`saveamberparm mol nucleosome.top nucleosome.crd` – saving topology and initial coordinates of the structure for simulation
+`savepdb mol nucleosome.pdb` – saving the system to PDB file
 
-To run the script, change working directory to `Dickerson_Drew_Dodecamer_files/Prep`and type in command line:
+To run the script, change working directory to `Nucleosome_simulation_files/Prep`and type in command line:
 
 `tleap -f tleap.script`
 
@@ -665,7 +666,7 @@ This will auto-generate `dna.top`,`dna.crd`,`dna.pdb` and `disang_NaCl.txt` a
 
 In the molecule, some clashes may appear during assembling of the system. The energy minimization step is necessary to remove bad contacts. Without minimization, the energy of contacting atoms may be high enough to crash the simulation. During minimization, atoms will be moved to find the closest structure with acceptable energy.
 
-For minimization process we use pmemd.cuda program of AMBER. The input file `min.in` for this step provided in `Dickerson_Drew_Dodecamer_files/` consists of the lines presented below:
+For minimization process we use pmemd.cuda program of AMBER. The input file `min.in` for this step provided in `Nucleosome_simulation_files/` consists of the lines presented below:
 
 ```
 Minimize
@@ -1012,7 +1013,7 @@ Outputs:
 
 ### 2.5 Production run
 
-After equilibration, run production MD to sample DNA conformation. See in `Dickerson_Drew_Dodecamer_files` or create file `prod.in`:
+After equilibration, run production MD to sample DNA conformation. See in `Nucleosome_simulation_files` or create file `prod.in`:
 
 ```
 Production
@@ -1079,14 +1080,16 @@ Use **CPPTRAJ** to compute RMSD of DNA heavy atoms over the production traject
 
 ```
 trajin prod.nc
-rms ToFirst :1-24&!@H= out rms_dna.txt
+reference nucleosome.pdb
+autoimage
+rms :40-135,161-237,254-354,398-485,527-622,648-724,741-841,885-974&@CA,N,C nofit reference out rmsd_core.txt
 run
 quit
 ```
 
 To run the analysis, type:
 
-`cpptraj -p dna.top < cpptraj.in`
+`cpptraj -p nucleosome.top < cpptraj.in`
 
 To visualize the data, use python script:
 
@@ -1102,7 +1105,7 @@ plt.figure(figsize=(10,6))
 plt.plot(time, rms, linewidth=2)
 plt.xlabel('Time (ps)', fontsize=14)
 plt.ylabel('RMSD (Å)', fontsize=14)
-plt.title('DNA RMSD Over 4 ns Production', fontsize=16)
+plt.title('Histone core RMSD Over 10 ns Production', fontsize=16)
 plt.axhline(np.mean(rms), linestyle='--', color='gray')
 plt.tight_layout()
 plt.savefig('rmsd_core.png', dpi=300)
@@ -1112,7 +1115,7 @@ To run the provided script, type:
 
 `python graph.py`
 
-The file `rmsd_dna.png` would contain the graph of RMSD vs. time. It should look like this: ![rmsd_dna](Pictures/rmsd_dna.png)
+The file `rmsd_core.png` would contain the graph of RMSD vs. time. It should look like this: ![rmsd_dna](Pictures/rmsd_dna.png)
 ### 2.7 Visualization of trajectory using ChimeraX
 
 1. **Open** ChimeraX.
