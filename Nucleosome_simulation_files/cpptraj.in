@@ -1,0 +1,6 @@
+trajin prod.nc
+reference nucleosome.pdb
+autoimage
+rms :40-135,161-237,254-354,398-485,527-622,648-724,741-841,885-974&@CA,N,C nofit reference out rmsd_core.txt
+run
+quit

@@ -1,0 +1,12 @@
+source leaprc.DNA.OL15
+source leaprc.protein.ff19SB
+loadoff atomic_ions.lib
+set default PBradii mbondi3
+source leaprc.water.opc
+loadAmberParams frcmod.ionsjc_tip4pew
+mol = loadpdb Nucleosome.pdb
+addions mol K+ 5256
+addions mol Cl- 5119
+saveamberparm mol nucleosome.top nucleosome.crd
+savepdb mol nucleosome.pdb
+quit
