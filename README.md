@@ -578,7 +578,7 @@ The file `rmsd_dna.png` would contain the graph of RMSD vs. time. It should look
 2. Drag and drop file **dna.pdb**
 3. **Trajectory**: Drag and drop **prod.nc** (MD trajectory), choose`Amber netCDF coordinates` in pop-up window.
 4. Click **Play** to observe DNA + ions’ dynamics.
-You should observe something like this:![Prod_frame](Prod_frame_DNA.png)
+You should observe something like this:![Prod_frame_DNA](Prod_frame_DNA.png)
 
 
 ## 3. SImulation of a nucleosome using GBION model
