@@ -578,7 +578,7 @@ The file `rmsd_dna.png` would contain the graph of RMSD vs. time. It should look
 2. Drag and drop file **dna.pdb**
 3. **Trajectory**: Drag and drop **prod.nc** (MD trajectory), choose`Amber netCDF coordinates` in pop-up window.
 4. Click **Play** to observe DNA + ions’ dynamics.
-You should observe something like this:![Prod_frame_DNA](Prod_frame_DNA.png)
+You should observe something like this:![Prod_frame_DNA](Pictures/Prod_frame_DNA.png)
 
 
 ## 3. SImulation of a nucleosome using GBION model
@@ -1116,7 +1116,7 @@ To run the provided script, type:
 `python graph.py`
 
 The file `rmsd_core.png` would contain the graph of RMSD vs. time. It should look like this:
-![[rmsd_core.png]]
+![rmsd_core](Pictures/rmsd_core.png)
 ### 3.7 Visualization of trajectory using ChimeraX
 
 1. **Open** ChimeraX.
@@ -1140,4 +1140,4 @@ color sel #6a137a
 car style t 5
 select clear
 ```
-You should observe something like this:![[Prod_frame_nucleosome.png]]
+You should observe something like this:![Prod_frame_nucleosome](Pictures/Prod_frame_nucleosome.png)
