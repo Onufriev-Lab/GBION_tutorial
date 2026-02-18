@@ -69,11 +69,17 @@ quit
 ```
 
 `source leaprc.DNA.OL15` – load the OL15 DNA force field.
+
 `loadoff atomic_ions.lib` & `source leaprc.water.opc`: load ion parameters.
+
 `set default PBradii mbondi3` – use mbondi3 radii (suitable for implicit solvent we use).
+
 `mol = loadpdb 1bna.pdb` – loading structure of DNA
+
 `addions mol Na+ 36` & `addions mol Cl- 14`: add 36 sodium and 14 chloride ions to neutralize and mimic roughly 150 mM.
+
 `saveamberparm mol dna.top dna.crd` – saving topology and initial coordinates of the structure for simulation
+
 `savepdb mol dna.pdb` – saving the system to PDB file
 
 To run the script, change working directory to `Dickerson_Drew_Dodecamer_files/Prep`and type in command line:
@@ -89,9 +95,13 @@ Output:
 Implicit‐solvent MD has no periodic box—ions would drift away. We use distance‐restraints to keep ions near the DNA. In the same `Prep/` directory type:
 
 `python disang.py` – this provided script finds center of mass of a specified molecule, finds specified number of atoms closest to the center of mass and produces file with distance restraints for ions around the molecule. The restraints would limit the distance from the center of mass of spcified number of center atoms to each ion. One can specify parameters below to apply the script to their own molecules:
+
 `Molecule_file = '1bna.pdb'` – specifies PDB-file with simulated biomolecule
+
 `namedisang = "disang_NaCl.txt"` – specifies output restraints file
+
 `Number_of_atoms_for_com = 10` – specifies number of atoms closest to the center of mass of the molecule to restraint ions with
+
 `number_of_ions= 50` – specifies number of ions to restrain
 
 `starting_index_of_ion= 759` – atom index of the first ion to restrain.
@@ -599,12 +609,18 @@ quit
 ```
 
 `source leaprc.DNA.OL15` – load the OL15 DNA force field.
+
 `loadoff atomic_ions.lib`, `source leaprc.water.opc` & `loadAmberParams frcmod.ionsjc_tip4pew`: load ion parameters.
+
 `set default PBradii mbondi3` – use mbondi3 radii (suitable for implicit solvent we use).
-`mol = loadpdb 1bna.pdb` – loading structure of DNA
+
+`mol = loadpdb 1bna.pdb` – loading structure of DNA.
+
 `addions mol K+ 5256` & `addions mol Cl- 5119`: add 5256 potassium and 5119 chloride ions to neutralize and mimic roughly 150 mM.
-`saveamberparm mol nucleosome.top nucleosome.crd` – saving topology and initial coordinates of the structure for simulation
-`savepdb mol nucleosome.pdb` – saving the system to PDB file
+
+`saveamberparm mol nucleosome.top nucleosome.crd` – saving topology and initial coordinates of the structure for simulation.
+
+`savepdb mol nucleosome.pdb` – saving the system to PDB file.
 
 To run the script, change working directory to `Nucleosome_simulation_files/Prep`and type in command line:
 
@@ -709,17 +725,29 @@ END
 ```
 
 `imin=1`  – turn minimization regime on
+
 `ntx=1` – read coordinates from input coordinates file
+
 `igb=8` – specify implicit solvent model GBneck2
+
 `irest=0` – ignore input velocities
+
 `maxcyc=2000` – limit of minimization cycles
+
 `ncyc=1000`  – the number of minimization cycles with the steepest descent algorithm applied. The conjugate gradient algorithm is used for another 1000 steps
+
 `ntpr=100` – write down output every 100 cycles
+
 `ntwx=0` – do not write coordinate trajectory file
+
 `ntr=1` – apply restraints of the group of atoms specified below to the reference coordinates
+
 `cut=9999.0` – Cutoff distance of nonbonded interaction calculation in angstroms. The higher the number the more interacting atoms are considered and the more accurate and computationally expensive the calculaition is. For implicit solvent simulation huge number is usually used.
+
 `gbion=3` – turn on GBION model
+
 `nmropt=1` – turn on distance restraints for ions
+
 `intdiel=1` – internal dielectric of the solute molecule
 
 `gbsa=3` – take into account the energy of the surface tension
@@ -727,8 +755,11 @@ END
 **Parameters implemented into GB approximation of interaction energy of different atom pairs:**
 
 `gi_coef_1_p=1,` – $K_{GB}$ for pair solute atom – cation
+
 `gi_coef_1_n=0.05,` – $K_{GB}$ for pair solute atom – anion
+
 `gi_coef_2_pp=1,` – $K_{GB}$ for pair cation – cation
+
 `gi_coef_2_pn=0.05,` – $K_{GB}$ for pair cation – anion
 
 `gi_coef_2_nn=1,` – $K_{GB}$ for pair anion – anion
