@@ -578,7 +578,7 @@ The file `rmsd_dna.png` would contain the graph of RMSD vs. time. It should look
 2. Drag and drop file **dna.pdb**
 3. **Trajectory**: Drag and drop **prod.nc** (MD trajectory), choose`Amber netCDF coordinates` in pop-up window.
 4. Click **Play** to observe DNA + ions’ dynamics.
-You should observe something like this:![Prod_frame_DNA](Pictures/Prod_frame_DNA.png)
+You should observe something like this:![Prod_frame_DNA](Prod_frame_DNA.png)
 
 
 ## 3. SImulation of a nucleosome using GBION model
@@ -647,8 +647,8 @@ igr1=5446,5445,5441,3752,3750,3748,3747,3746,3730,2169,igr2=35316
 - `iat=-1,-1`: instructs AMBER to read `igr1` and `igr2` groups, then restrain their centers of mass.  
     • `igr1`: (set of 10 atoms) → DNA’s geometric center.  
     • `igr2`: index of an ion.
-- `r1=0.0, r2=0.0, r3=40, r4=50`: define a flat-bottom restraint (0–40 Å flat, then a parabola up to 50 Å).
-- `rk3=20.0`: force constant (20 kcal · mol<sup>−1</sup> · Å<sup>−2</sup>) as atoms go from 40→50 Å.
+- `r1=0.0, r2=0.0, r3=40, r4=50`: define a flat-bottom restraint (0–240 Å flat, then a parabola up to 250 Å).
+- `rk3=20.0`: force constant (20 kcal · mol<sup>−1</sup> · Å<sup>−2</sup>) as atoms go from 240→250 Å.
 
 Copy `nucleosome.*` and `disang_NaCl.txt` up one level:
 
@@ -944,7 +944,7 @@ AMBER would produce the next files after this simulation:
 * `heat.nc` – contains time series of the atom coordinates of the system
 * `heat.ncrst` – final coordinates of the system
 
-### 2.4 Equilibration of the system
+### 3.4 Equilibration of the system
 
 Now let ions relax around DNA at 300 K. The input file for this step `equil.in` consists of the lines below:
 
@@ -1011,7 +1011,7 @@ Outputs:
 • `equil.nc` (3 ns trajectory)  
 • `equil.ncrst` (final coordinates+velocities)
 
-### 2.5 Production run
+### 3.5 Production run
 
 After equilibration, run production MD to sample DNA conformation. See in `Nucleosome_simulation_files` or create file `prod.in`:
 
@@ -1074,7 +1074,7 @@ Outputs:
 * `prod.nc` (trajectory, every 1 ps)
 * `prod.ncrst` (final snapshot)
 
-### 2.6 Analysis of DNA stability
+### 3.6 Analysis of DNA stability
 
 Use **CPPTRAJ** to compute RMSD of DNA heavy atoms over the production trajectory. Input file `cpptraj.in` for this analysis should consist of the lines below:
 
@@ -1115,11 +1115,29 @@ To run the provided script, type:
 
 `python graph.py`
 
-The file `rmsd_core.png` would contain the graph of RMSD vs. time. It should look like this: ![rmsd_dna](Pictures/rmsd_dna.png)
-### 2.7 Visualization of trajectory using ChimeraX
+The file `rmsd_core.png` would contain the graph of RMSD vs. time. It should look like this:
+![[rmsd_core.png]]
+### 3.7 Visualization of trajectory using ChimeraX
 
 1. **Open** ChimeraX.
 2. Drag and drop file **nucleosome.pdb**
 3. **Trajectory**: Drag and drop **prod.nc** (MD trajectory).
 4. Click **Play** to observe nucleosome + ions’ dynamics.
-You should observe something like this:
+You can apply the ChimeraX commands below for better visual representation of histone tails and nucleosome core:
+```
+select :40-135,161-237,254-354,398-485,527-622,648-724,741-841,885-974,975-1264
+hide sel cartoon
+hide sel atoms
+show sel surface
+set bgColor white
+select :40-135,161-237,254-354,398-485,527-622,648-724,741-841,885-974
+color sel dark grey
+select :975-1264
+color sel #f68419
+select :1-39,136-160,238-253,355-365,366-397,488-526,623-647,725-740,842-852,853-884
+show sel car
+color sel #6a137a
+car style t 5
+select clear
+```
+You should observe something like this:![[Prod_frame_nucleosome.png]]
