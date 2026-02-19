@@ -12,7 +12,7 @@ The outline of this tutorial:
 	5. Production run
 	6. Analysis of the DNA stability
 	7. Visualization of trajectory using CHIMERAX
-3. **Part 2**: Instruction for simulation of the nucleosome using the model (updating)
+3. **Part 2**: Instruction for simulation of the nucleosome using the model
 	1. Preparing the topology, initial coordinates and restraints files for simulation
 	2. Energy minimization
 	3. Heating the system
