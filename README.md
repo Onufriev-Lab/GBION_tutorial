@@ -283,7 +283,7 @@ The output file of the simulation (`min.out`) should look like this:
 
 |   Executable path: pmemd
 | Working directory: /home/YOUR_DIRECTORY
-|          Hostname: strugatsky.cbb.lan
+|          Hostname: YOUR_HOST
 
   [-O]verwriting output
 ```
