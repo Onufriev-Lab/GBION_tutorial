@@ -333,7 +333,7 @@ Heat
   ntp=0,
   ntt=3,
   ntr=1,
-  gamma_ln=0.5,
+  gamma_ln=1,
   nmropt=1,
   ig=-1,
   gbion=3,
@@ -393,7 +393,7 @@ The parameters of the simulation are:
 
 `ntt=3` – turning on Langevin thermostat
 
-`gamma_ln=0.05` – Langevin thermostat collision frequency. In case of implicit water also controls speed of atoms
+`gamma_ln=1` – Langevin thermostat collision frequency. In case of implicit water also controls speed of atoms
 
 `ig=-1`– random seed for Langevin dynamics
 
