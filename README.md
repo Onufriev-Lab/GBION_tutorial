@@ -268,7 +268,7 @@ To run the energy minimization change working directory to `Dickerson_Drew_Dodec
 
 `pmemd.cuda -O -i min.in -o min.out -p dna.top -c dna.crd -r min.ncrst -inf min.mdinfo -ref dna.crd`
 
-Here flag `-O` induces overwriting the output files, `-i min.in` specifies file with input parameters, `-o min.out` specifies file, where output values will be written, `-p dna.top` specifies topology file, `-c dna.crd` – file with initial coordinates, `-r min.ncrst` – file with final coordinates, `-inf min.mdinfo` – file with intermediate values of energies and performance metrics, `-ref dna.crd` – reference coordinates for restraints for DNA atoms.
+Here flag `-O` induces overwriting the output files, `-i min.in` specifies file with input parameters, `-o min.out` specifies file, where output values will be written, `-p dna.top` specifies topology file, `-c dna.crd` – file with initial coordinates, `-r min.ncrst` – file with final coordinates and velocities, `-inf min.mdinfo` – file with intermediate values of energies and performance metrics, `-ref dna.crd` – reference coordinates for restraints for DNA atoms.
 
 The output file of the simulation (`min.out`) should look like this:
 ```
